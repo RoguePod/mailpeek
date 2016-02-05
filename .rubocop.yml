@@ -1,0 +1,40 @@
+# https://github.com/bbatsov/rubocop/blob/master/config/enabled.yml
+
+AllCops:
+  Include:
+    - '**/Rakefile'
+    - '**/Gemfile'
+    - '**/config.ru'
+    - '**/*.rake'
+    - '**/*.jbuilder'
+    - '**/*.gemspec'
+  Exclude:
+    - '**/db/schema.rb'
+    - '**/db/migrate/*'
+    - '**/config/**/*'
+    - '**/script/**/*'
+    - '**/vendor/assets/**/*'
+    - '**/bin/**/*'
+    - '**/node_modules/**/*'
+    - !ruby/regexp /old_and_unused\.rb$/
+MethodLength:
+  Max: 15
+LineLength:
+  Max: 80
+AbcSize:
+  Max: 30
+ClassLength:
+  Max: 150
+ModuleLength:
+  Max: 150
+NumericLiterals:
+  Enabled: false
+Lambda:
+  Exclude:
+    - 'app/models/**/*'
+Output:
+  Exclude:
+    - '**/*.rake'
+    - '**/rake_support.rb'
+BlockDelimiters:
+  Enabled: false
