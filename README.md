@@ -3,7 +3,7 @@
 ## Installation
 
 ```
-gem install mailpeek, github: 'RoguePod/mailpeek', group: :development
+gem 'mailpeek', github: 'RoguePod/mailpeek', group: :development
 ```
 
 ## Setup
