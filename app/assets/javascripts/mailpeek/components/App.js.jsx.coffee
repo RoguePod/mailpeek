@@ -24,9 +24,14 @@ class @App extends React.Component
           error: 'Sorry, An error occurred when retrieving the emails'
 
       if request.status >= 200 && request.status < 400
+        if @state.selected
+          selected = @state.selected
+        else
+          selected = _.first(response.emails)
         @setState
           emails: response.emails
           fetching: false
+          selected: selected
       else
         console.log 'nope'
         @setState

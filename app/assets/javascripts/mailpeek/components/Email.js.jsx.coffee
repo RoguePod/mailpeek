@@ -2,6 +2,9 @@ class @Email extends React.Component
   render: ->
     email = @props.email
 
+    unless email
+      return `<div className="email email_empty">No Emails Found</div>`
+
     createdAt  = moment(email.date).format('MMM Do YYYY, h:mm:ss a')
     `<div className="email">
       <div className="email__details">

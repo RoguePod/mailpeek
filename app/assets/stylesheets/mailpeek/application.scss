@@ -139,6 +139,14 @@ $sidebar-width: 320px;
 .email {
   margin: 15px 15px 0 345px;
 
+  &_empty {
+    @include card(2);
+    text-align: center;
+    font-size: 24px;
+    padding: 15px;
+    background: $white;
+  }
+
   &__details {
     @include card(2);
     margin-bottom: 15px;
