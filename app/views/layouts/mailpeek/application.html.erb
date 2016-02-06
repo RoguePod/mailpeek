@@ -2,13 +2,13 @@
 <html>
 <head>
   <title>Mailpeek</title>
-  <%= stylesheet_link_tag    "mailpeek/application", media: "all" %>
-  <%= javascript_include_tag "mailpeek/application" %>
+  <%= stylesheet_link_tag 'mailpeek/application', media: 'all' %>
   <%= csrf_meta_tags %>
 </head>
 <body>
 
 <%= yield %>
 
+<%= javascript_include_tag 'mailpeek/application' %>
 </body>
 </html>
