@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email       = ['jeffharper@roguepod.com']
   s.homepage    = 'https://github.com/RoguePod/mailpeek'
   s.summary     = 'Preview Rails Emails'
-  s.description = 'Provides an rails routes to view sent email'
+  s.description = 'Provides a web interface to view emails sent out when developing in rails'
   s.license     = 'MIT'
 
   s.files = Dir[
