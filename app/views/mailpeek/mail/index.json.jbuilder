@@ -8,12 +8,12 @@ json.emails(@emails) do |email|
   if email.body.parts.empty?
     parts.push(
       type: email.content_type =~ /plain/ ? 'text' : 'html',
-      content: email.body.decoded)
+      content: email.body.decoded.force_encoding('utf-8'))
   else
     email.body.parts.each do |part|
       parts.push(
         type: part.content_type =~ /plain/ ? 'text' : 'html',
-        content: part.body.decoded)
+        content: part.body.decoded.force_encoding('utf-8'))
     end
   end
 
