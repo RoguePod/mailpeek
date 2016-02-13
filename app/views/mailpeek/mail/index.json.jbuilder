@@ -1,4 +1,5 @@
-json.emails(@emails) do |email|
+json.emails(@emails) do |file, email|
+  json.file file
   json.extract!(email, :message_id, :date, :subject)
   json.created_at time_ago_in_words(email.date)
   json.to email[:to].decoded
@@ -17,7 +18,7 @@ json.emails(@emails) do |email|
     end
   end
 
-  json.body(parts) do |part|
+  json.body(parts.reverse) do |part|
     json.type part[:type]
     json.content part[:content]
   end

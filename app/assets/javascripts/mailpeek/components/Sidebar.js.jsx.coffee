@@ -1,20 +1,17 @@
 class @Sidebar extends React.Component
   render: ->
     emails = @props.emails.map (email, index) =>
-      click      = this.props.handleEmailClick.bind(this, email)
+      onSelect = this.props.onEmailSelect.bind(this, email)
+      onDelete = this.props.onEmailDelete.bind(this, email)
+      selected = this.props.selected &&
+                 email.message_id == this.props.selected.message_id
 
-      classNames = 'email-item'
-      if @props.selected && email.message_id == @props.selected.message_id
-        classNames = 'email-item email-item_selected'
-
-      `<li
-        className={classNames}
+      `<ListItem
         key={index}
-        onClick={click}>
-        <strong className="email-item__subject">{email.subject}</strong>
-        <em className="email-item__date text-muted">{email.created_at} ago</em>
-      </li>`
-
+        email={email}
+        selected={selected}
+        onSelect={onSelect}
+        onDelete={onDelete} />`
 
     classNames = 'sidebar'
     classNames = 'sidebar sidebar_open' if this.props.open

@@ -9,75 +9,94 @@ class @App extends React.Component
       fetching: false
       error: null
 
-  _retrieveEmails: ->
+  componentDidMount: ->
+    @handleFocus = =>
+      @_retrieveEmails(false)
+      true
+
+    window.addEventListener 'focus', @handleFocus
+
+    true
+
+  componentWillUnmount: ->
+    window.removeEventListener 'focus', @handleFocus
+
+    true
+
+  _retrieveEmails: (fetching = true) ->
     @setState
-      fetching: true
+      fetching: fetching
       error: null
-    request = new XMLHttpRequest()
-    request.open('GET', '/mailpeek/mail.json', true)
 
-    request.onload = =>
-      try
-        response = JSON.parse(request.responseText)
-      catch e
-        response =
-          error: 'Sorry, An error occurred when retrieving the emails'
+    $.ajax
+      type: 'GET'
+      url: '/mailpeek/mail.json'
+      dataType: 'json'
+      success: (response) =>
+        emails = response.emails
 
-      if request.status >= 200 && request.status < 400
-        if @state.selected
+        if @state.selected && _.find(emails, (e) => e.file == @state.selected.file)
           selected = @state.selected
         else
-          selected = _.first(response.emails)
+          selected = _.first(emails)
         @setState
-          emails: response.emails
+          emails: emails
           fetching: false
           selected: selected
-      else
+      error: =>
         @setState
           fetching: false
-          error: response.error
-
-    request.onerror = =>
-      @setState
-        fetching: false
-        error: 'Sorry, An error occurred when retrieving the emails'
-
-    request.send()
+          error: 'Sorry, an error occurred when retrieving the emails.'
     true
 
-  componentDidMount: ->
-    true
-
-  _onEmailClick: (email) ->
+  _handleEmailSelect: (email) ->
     @setState
       selected: email
       open: false
     true
 
-  _onMenuIconClick: ->
-    @setState
-      open: !@state.open
+  _handleEmailDelete: (email, event) ->
+    event.stopPropagation()
+    if confirm('Are you sure?  This cannot be undone.')
+      @setState
+        error: false
+        fetching: true
+      $.ajax
+        type: 'DELETE'
+        url: "/mailpeek/mail/#{email.file}"
+        success: (response) =>
+          @_retrieveEmails()
+        error: =>
+          @setState
+            error: 'Sorry, an error ocurred when deleting the email.'
+            fetching: false
+      true
+
     true
 
-  _onRefreshIconClick: ->
-    this._retrieveEmails()
+  _handleMenuToggle: ->
+    @setState open: !@state.open
     true
 
-  _onTrashIconClick: ->
-    if confirm('Are you sure you want delete ALL emails?')
-      @setState fetching: true
-      request = new XMLHttpRequest()
-      request.open('delete', '/mailpeek/mail/all.json', true)
-      request.onload = =>
-        @setState
-          selected: null
-        this._retrieveEmails()
+  _handleRefresh: ->
+    @_retrieveEmails()
+    true
 
-      request.onerror = =>
-        @setState
-          fetching: false
-          error: 'Sorry, An error occurred when delete all emails'
-      request.send()
+  _handleAllEmailsDelete: ->
+    if confirm('Are you sure you want delete ALL emails? This cannot be undone')
+      @setState
+        error: false
+        fetching: true
+      $.ajax
+        type: 'DELETE'
+        url: '/mailpeek/mail'
+        success: (response) =>
+          @setState selected: null
+          @_retrieveEmails()
+        error: =>
+          @setState
+            error: 'Sorry, an error ocurred when deleting all emails.'
+            fetching: false
     true
 
   render: ->
@@ -95,11 +114,11 @@ class @App extends React.Component
       {loading}
       <header className="header">
         <i
-          className="fa fa-bars header__menu-icon visible-xs" onClick={this._onMenuIconClick.bind(this)} />
+          className="fa fa-bars header__menu-icon visible-xs" onClick={this._handleMenuToggle.bind(this)} />
         <i
-          className="fa fa-trash header__trash-icon" onClick={this._onTrashIconClick.bind(this)} />
+          className="fa fa-trash header__trash-icon" onClick={this._handleAllEmailsDelete.bind(this)} />
         <i
-          className="fa fa-refresh header__refresh-icon" onClick={this._onRefreshIconClick.bind(this)} />
+          className="fa fa-refresh header__refresh-icon" onClick={this._handleRefresh.bind(this)} />
         <span className="header__title">Mailpeek</span>
       </header>
       {error}
@@ -107,7 +126,8 @@ class @App extends React.Component
         emails={this.state.emails}
         open={this.state.open}
         selected={this.state.selected}
-        handleEmailClick={this._onEmailClick.bind(this)} />
+        onEmailSelect={this._handleEmailSelect.bind(this)}
+        onEmailDelete={this._handleEmailDelete.bind(this)} />
       <Email
         email={this.state.selected} />
     </div>`

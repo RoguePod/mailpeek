@@ -3,33 +3,42 @@ require_dependency 'mailpeek/application_controller'
 module Mailpeek
   # Public: MailController
   class MailController < ApplicationController
+    before_action :load_emails
+
     def index
-      dir     = Rails.root.join('tmp', 'mailpeek')
-      @emails = []
-
-      return unless File.directory?(dir)
-
-      Dir.foreach(dir) do |item|
-        next if item == '.' || item == '..'
-        mail = Mail.read("#{dir}/#{item}")
-        @emails.push mail
-      end
-
-      @emails = @emails.sort { |a, b| b.date <=> a.date }.first(50)
+      @emails = @emails.sort.reverse.to_h
     end
 
-    def all
-      dir     = Rails.root.join('tmp', 'mailpeek')
-      @emails = []
+    def destroy
+      email = @emails[params[:id]]
 
-      return unless File.directory?(dir)
+      File.delete("#{directory}/#{params[:id]}") if email
 
-      Dir.foreach(dir) do |item|
-        next if item == '.' || item == '..'
-        File.delete("#{dir}/#{item}")
+      head :ok
+    end
+
+    def destroy_all
+      @emails.each do |file, _|
+        File.delete("#{directory}/#{file}")
       end
 
       head :ok
+    end
+
+    private
+
+    def load_emails
+      @emails = {}
+      return unless File.directory?(directory)
+
+      Dir.foreach(directory) do |filename|
+        next if filename == '.' || filename == '..'
+        @emails[filename] = Mail.read("#{directory}/#{filename}")
+      end
+    end
+
+    def directory
+      Rails.root.join('tmp', 'mailpeek')
     end
   end
 end

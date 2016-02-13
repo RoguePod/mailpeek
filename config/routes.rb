@@ -1,7 +1,7 @@
 Mailpeek::Engine.routes.draw do
   resources :mail, only: [:index, :destroy] do
     collection do
-      delete :all
+      delete :index, action: :destroy_all
     end
   end
 

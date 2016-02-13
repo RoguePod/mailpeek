@@ -16,6 +16,8 @@ module Mailpeek
       Mailpeek::Engine.config.react.variant = :development
     end
 
+    require 'jbuilder'
+    require 'jquery-rails'
     require 'react-rails'
     require 'bootstrap-sass'
     require 'font-awesome-sass'
