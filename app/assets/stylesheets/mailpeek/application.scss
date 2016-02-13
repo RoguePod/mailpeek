@@ -50,6 +50,12 @@ $sidebar-width: 320px;
   &__refresh-icon {
     line-height: $header-height;
     float:right;
+    margin-right: 25px;
+    font-size: 24px;
+  }
+  &__trash-icon {
+    line-height: $header-height;
+    float:right;
     margin-right: 15px;
     font-size: 24px;
   }

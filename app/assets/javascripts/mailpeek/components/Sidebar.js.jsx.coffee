@@ -4,7 +4,7 @@ class @Sidebar extends React.Component
       click      = this.props.handleEmailClick.bind(this, email)
 
       classNames = 'email-item'
-      if email.message_id == @props.selected.message_id
+      if @props.selected && email.message_id == @props.selected.message_id
         classNames = 'email-item email-item_selected'
 
       `<li

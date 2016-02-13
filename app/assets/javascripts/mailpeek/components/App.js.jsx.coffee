@@ -33,13 +33,11 @@ class @App extends React.Component
           fetching: false
           selected: selected
       else
-        console.log 'nope'
         @setState
           fetching: false
           error: response.error
 
     request.onerror = =>
-      console.log 'error';
       @setState
         fetching: false
         error: 'Sorry, An error occurred when retrieving the emails'
@@ -65,6 +63,23 @@ class @App extends React.Component
     this._retrieveEmails()
     true
 
+  _onTrashIconClick: ->
+    if confirm('Are you sure you want delete ALL emails?')
+      @setState fetching: true
+      request = new XMLHttpRequest()
+      request.open('delete', '/mailpeek/mail/all.json', true)
+      request.onload = =>
+        @setState
+          selected: null
+        this._retrieveEmails()
+
+      request.onerror = =>
+        @setState
+          fetching: false
+          error: 'Sorry, An error occurred when delete all emails'
+      request.send()
+    true
+
   render: ->
     classNames = ['error']
     classNames.push 'error_show' if @state.error
@@ -81,6 +96,8 @@ class @App extends React.Component
       <header className="header">
         <i
           className="fa fa-bars header__menu-icon visible-xs" onClick={this._onMenuIconClick.bind(this)} />
+        <i
+          className="fa fa-trash header__trash-icon" onClick={this._onTrashIconClick.bind(this)} />
         <i
           className="fa fa-refresh header__refresh-icon" onClick={this._onRefreshIconClick.bind(this)} />
         <span className="header__title">Mailpeek</span>
