@@ -12,16 +12,6 @@ module Mailpeek
       end
     end
 
-    initializer('mailpeek.react-rails') do
-      Mailpeek::Engine.config.react.variant = :development
-    end
-
     require 'jbuilder'
-    require 'jquery-rails'
-    require 'react-rails'
-    require 'bootstrap-sass'
-    require 'font-awesome-sass'
-    require 'lodash-rails'
-    require 'momentjs-rails'
   end
 end

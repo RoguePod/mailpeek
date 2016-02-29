@@ -1,5 +1,7 @@
 # Mailpeek
 
+Mailpeek provides a web interface to view emails sent out when developing in Rails.
+
 ## Installation
 
 Add to your Gemfile:

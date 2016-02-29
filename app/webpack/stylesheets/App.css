@@ -1,0 +1,92 @@
+@import '_variables';
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,700);
+
+.app {
+  font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: $body-bg;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  &__header {
+    background: $brand-primary;
+    color: $white;
+    height: $header-height;
+    position: relative;
+    z-index: 4;
+    padding: 0 15px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.12);
+  }
+  &__menu-icon {
+    display:none;
+    line-height: $header-height;
+    float:left;
+    margin-right: 15px;
+    font-size: 24px;
+  }
+  &__refresh-icon {
+    line-height: $header-height;
+    float:right;
+    margin-right: 25px;
+    font-size: 24px;
+  }
+  &__trash-icon {
+    line-height: $header-height;
+    float:right;
+    margin-right: 15px;
+    font-size: 24px;
+  }
+
+  &__title {
+    line-height: $header-height;
+    font-size: 24px;
+  }
+
+  &__loading {
+    opacity: 0.5;
+    background: #757575;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+    text-align: center;
+    &__icon {
+      position: absolute;
+      top: 50%;
+      color: $white;
+      font-size: 64px;
+      transform: translate(0, -50%);
+    }
+  }
+
+  &__error {
+    position: fixed;
+    bottom: 15px;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    width: 300px;
+    margin: 0 auto;
+    @mixin card 3;
+    background: #F44336;
+    color: $white;
+    text-align: center;
+    transition: transform 0.25s ease;
+    transform: translate(0, 200%);
+
+    &_show {
+      transform: translate(0, 0);
+    }
+  }
+}
+
+@media (max-width: $screen-sm-min) {
+  .app__menu-icon {
+    display: inline-block;
+  }
+}

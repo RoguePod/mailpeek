@@ -21,19 +21,9 @@ Gem::Specification.new do |s|
   s.test_files = Dir['spec/**/*']
 
   s.add_dependency 'rails', '>= 4'
-  s.add_dependency 'mail'
-  s.add_dependency 'jbuilder'
-  s.add_dependency 'react-rails'
-  s.add_dependency 'jquery-rails'
-  s.add_dependency 'uglifier'
-  s.add_dependency 'coffee-rails'
-  s.add_dependency 'sass-rails'
-  s.add_dependency 'bootstrap-sass'
-  s.add_dependency 'font-awesome-sass'
-  s.add_dependency 'lodash-rails'
-  s.add_dependency 'momentjs-rails'
+  s.add_dependency 'jbuilder', '>= 2'
 
   s.add_development_dependency 'guard-rubocop'
-  s.add_development_dependency 'rspec-rails'
+  s.add_development_dependency 'rspec-rails', '>= 3'
   s.add_development_dependency 'simplecov'
 end
