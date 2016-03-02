@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mailpeek (0.0.1)
+    mailpeek (0.0.2)
       jbuilder (>= 2)
       rails (>= 4)
 
