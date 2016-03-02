@@ -77,14 +77,14 @@ class App extends React.Component {
 
   _handleEmailDelete(email, event) {
     event.stopPropagation()
-    if(confirm('Are you sure?  This cannot be undone.')) {
+    if(email.file && confirm('Are you sure?  This cannot be undone.')) {
       this.setState({
         error: false,
         fetching: true
       })
       $.ajax({
         type: 'DELETE',
-        url: "/mailpeek/mail/#{email.file}",
+        url: `/mailpeek/mail/${email.file}`,
         success: (response) => {
           this._retrieveEmails();
         },

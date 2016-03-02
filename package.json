@@ -1,6 +1,6 @@
 {
   "name": "mailpeek",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Provides a web interface to view emails sent out when developing in Rails.",
   "scripts": {
     "build": "webpack",
