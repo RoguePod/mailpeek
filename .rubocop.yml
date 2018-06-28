@@ -1,4 +1,6 @@
-# https://github.com/bbatsov/rubocop/blob/master/config/enabled.yml
+# frozen_string_literal: true
+
+require: rubocop-rspec
 
 AllCops:
   Include:
@@ -8,33 +10,64 @@ AllCops:
     - '**/*.rake'
     - '**/*.jbuilder'
     - '**/*.gemspec'
+    - '**/*.rb'
   Exclude:
     - '**/db/schema.rb'
-    - '**/db/migrate/*'
-    - '**/config/**/*'
     - '**/script/**/*'
     - '**/vendor/assets/**/*'
     - '**/bin/**/*'
+    - '**/gems/**/*'
     - '**/node_modules/**/*'
+    - '**/app/services/diagram/**/*'
     - !ruby/regexp /old_and_unused\.rb$/
-MethodLength:
-  Max: 15
-LineLength:
-  Max: 80
 AbcSize:
   Max: 30
+BlockDelimiters:
+  Enabled: false
+BlockLength:
+  Exclude:
+    - '**/admin/**/*'
+    - '**/spec/**/*'
+    - '**/app/views/**/*.jbuilder'
+    - '**/lib/**/*.rake'
+    - '**/config/routes.rb'
+    - '**/config/god*'
+    - '**/config/environments/*'
 ClassLength:
   Max: 150
-ModuleLength:
-  Max: 150
-NumericLiterals:
-  Enabled: false
 Lambda:
   Exclude:
     - 'app/models/**/*'
+LineLength:
+  Max: 80
+  Exclude:
+    - 'config/initializers/content_security_policy.rb'
 Output:
   Exclude:
     - '**/*.rake'
     - '**/rake_support.rb'
-BlockDelimiters:
+MethodLength:
+  Max: 15
+ModuleLength:
+  Max: 150
+FileName:
+  Exclude:
+    - '**/Guardfile'
+    - '**/Capfile'
+Lint/AmbiguousBlockAssociation:
   Enabled: false
+Rails/UnknownEnv:
+  Environments:
+    - development
+    - test
+    - staging
+    - production
+Style/Documentation:
+  Exclude:
+    - '**/db/migrate/*'
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
+RSpec/ExampleLength:
+  Max: 15
+RSpec/NestedGroups:
+  Max: 4

@@ -1,0 +1,92 @@
+aside.sidebar(
+  data-target="mailpeek.sidebar"
+)
+  .sidebar__bar(data-turbolinks-permanent)
+    form.sidebar__form
+      .input-group.input-group-sm
+        input.form-control(
+          name="q"
+          placeholder="Search Emails..."
+          type="search"
+          value="#{params[:q]}"
+        )
+        .input-group-append
+          - if params[:q].present?
+            = link_to(\
+              url_for(only_path: false, overwrite_params: nil),
+              class: 'btn btn-danger',
+              title: 'Clear Search',
+              data: { toggle: 'tooltip', placement: 'top' }\
+            ) do
+              i.material-icon
+                | close
+          button.btn.btn-primary(type="submit")
+            i.material-icon
+              | search
+    - if @emails.any?
+      = link_to(\
+        read_emails_path(email_id: @email ? @email.id : ''),
+        class: 'sidebar__action',
+        title: 'Mark All Emails Read',
+        data: { toggle: 'tooltip', placement: 'top' }\
+      ) do
+        i.material-icon
+          | playlist_add_check
+    = link_to(\
+      root_path,
+      class: 'sidebar__action',
+      title: 'Refresh Emails',
+      data: { toggle: 'tooltip', placement: 'top' }\
+    ) do
+      i.material-icon
+        | refresh
+    - if @emails.any?
+      = link_to(\
+          emails_path,
+          method: :delete,
+          class: 'sidebar__action',
+          data: {\
+            confirm: 'This will remove all emails and cannot be undone.  Are you sure?',
+            placement: 'top',
+            toggle: 'tooltip'\
+          },
+          title: 'Delete All Emails'\
+        ) do
+        i.material-icon
+          | delete
+
+  - if @emails.any?
+    .sidebar__content
+      ul.sidebar__list.sidebar__top
+        - @emails.each do |email|
+          li.sidebar__email(
+            data-id="#{email.id}"
+            class="#{email.read ? 'sidebar__read' : 'sidebar__unread'}"
+          )
+            = link_to email_path(email.id, request.query_parameters), class: "email-item #{@email.id == email.id ? 'email-item_selected' : ''}" do
+              .email-item__subject.pb-1.h6
+                = email.subject
+              .email-item__info.d-flex
+                .email-item__to.text-muted.d-flex.flex-wrap
+                  .pr-1
+                    strong To:
+                  .text-primary
+                    | &lt;
+                    = email.to.join('></div>,&nbsp;<div class="text-primary">&lt;').html_safe
+                    | >
+                strong.email-item__date.text-muted
+                  = "#{time_ago_in_words(email.date)} ago"
+
+    - if @emails.size < @emails.total_count
+      .sidebar__more
+        = link_to(\
+          'More',
+          root_path(request.query_parameters.merge(per: @emails.size + 25)),
+          class: 'btn btn-primary btn-block'\
+        )
+
+  - else
+    .sidebar__top.sidebar__empty.text-muted
+      | No Emails Found
+
+.overlay(data-target="mailpeek.overlay")

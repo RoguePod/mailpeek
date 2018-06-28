@@ -1,0 +1,105 @@
+.email(data-turbolinks-permanent)
+  .email__details
+    .float-right.pl-2
+      = link_to(\
+          email_path(@email.id, request.query_parameters.except(:id)),
+          method: :delete,
+          data: {\
+            confirm: 'Are you sure you want to delete this email? This cannot be undone.',
+            placement: 'left',
+            toggle: 'tooltip'\
+          },
+          title: 'Delete This Email',
+          class: 'btn btn-danger btn-sm'\
+        ) do
+        i.material-icon
+          | delete
+    h4
+      = @email.subject
+
+    dl
+      dt
+        | From:
+      dd
+        = @email.from.join(', ')
+      dt
+        | To:
+      dd
+        = @email.to.join(', ')
+    details
+      summary
+        | More Info
+      dl
+        dt
+          | Message ID
+        d
+          = @email.message_id
+        dt
+          | Date
+        dd
+          = @email.date.strftime('%a, %b %d %Y, %-l:%M%P %Z')
+
+  .email__tabs
+    .email__border1
+      | &nbsp;
+    .email__border2
+      | &nbsp;
+    .email__nav
+      ul.nav.nav-tabs
+        - if @email.html.present?
+          li.nav-item
+            = link_to(\
+              'HTML',
+              '#html',
+              id: 'html-tab',
+              class: 'nav-link active',
+              data: { toggle: 'tab' }\
+            )
+
+        - if @email.text.present?
+          li.nav-item
+            = link_to(\
+              'Text',
+              '#text',
+              id: 'text-tab',
+              class: "nav-link #{@email.html.blank? ? 'active' : ''}",
+              data: { toggle: 'tab' }\
+            )
+
+        - if @email.attachments.any?
+          li.nav-item
+            = link_to(\
+              'Attachments',
+              '#attachments',
+              id: 'attachments-tab',
+              class: 'nav-link',
+              data: { toggle: 'tab' }\
+            )
+
+  .tab-content.email__tab-content
+    - if @email.html.present?
+      #html.tab-pane.email__iframe.active
+        iframe.html(
+          frameborder="0"
+          height="100%"
+          seamless
+          srcdoc="#{@email.html}"
+          width="100%"
+        )
+
+    - if @email.text.present?
+      #text.tab-pane.email__text(class="#{@email.html.blank? ? 'active' : ''}")
+        = simple_format h(@email.text)
+
+    - if @email.attachments.any?
+      #attachments.tab-pane
+        .py-3
+          ul
+            - @email.attachments.each do |attachment|
+              li
+                = link_to(\
+                  attachment, email_attachment_path(@email.id, attachment),
+                  target: :blank\
+                )
+
+

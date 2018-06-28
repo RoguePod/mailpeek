@@ -1,0 +1,99 @@
+/*
+ *= require_self
+ *= require_tree .
+ */
+
+@import 'variables';
+@import 'bootstrap';
+
+body, html {
+  height: 100%;
+}
+
+.material-icon {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.25rem;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+
+  &.md-2x {
+    font-size: 2rem;
+  }
+}
+
+.turbolinks-progress-bar {
+  height: 5px;
+  background-color: $white;
+  z-index: 1000;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    'nav nav'
+    'aside main'
+    'aside footer';
+  min-height: 100%;
+}
+
+nav {
+  grid-area: nav;
+}
+
+main {
+  grid-area: main;
+  position: relative;
+}
+
+footer {
+  color: $white;
+  grid-area: footer;
+  height: 38px;
+  line-height: 38px;
+  padding: 0 .5rem;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    grid-template-columns: none;
+    grid-template-areas:
+      'nav'
+      'main'
+      'footer';
+  }
+}
+
+.navbar {
+  &__menu {
+    @include invisible(hidden);
+
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    &__menu {
+      @include invisible(visible);
+    }
+  }
+}

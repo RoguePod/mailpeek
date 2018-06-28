@@ -1,9 +1,14 @@
+# frozen_string_literal: true
+
 Mailpeek::Engine.routes.draw do
-  resources :mail, only: [:index, :destroy] do
+  resources :emails, only: %i[index destroy show] do
     collection do
       delete :index, action: :destroy_all
+      get :read
     end
+
+    resources :attachments, only: [:show]
   end
 
-  root to: 'mail#index'
+  root to: 'emails#index'
 end

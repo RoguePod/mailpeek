@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mailpeek
   # Public: Engine
   class Engine < ::Rails::Engine
@@ -7,11 +9,12 @@ module Mailpeek
       ActiveSupport.on_load :action_mailer do
         ActionMailer::Base.add_delivery_method(
           :mailpeek,
-          Mailpeek::Delivery,
-          location: Rails.root.join('tmp', 'mailpeek'))
+          Mailpeek::Delivery
+        )
       end
     end
 
     require 'jbuilder'
+    require 'kaminari'
   end
 end

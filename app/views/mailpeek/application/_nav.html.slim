@@ -1,0 +1,6 @@
+nav.navbar.navbar-dark.bg-primary(data-turbolinks-permanent)
+  = link_to 'Mailpeek', root_path, class: 'navbar-brand'
+
+  .float-right.navbar__menu(data-action="click->mailpeek#toggleSidebar")
+    i.material-icon.text-white.md-2x
+      | menu
