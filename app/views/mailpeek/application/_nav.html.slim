@@ -1,6 +1,11 @@
-nav.navbar.navbar-dark.bg-primary(data-turbolinks-permanent)
-  = link_to 'Mailpeek', root_path, class: 'navbar-brand'
+nav.bg-blue.text-white.flex.flex-row.items-center.px-4.justify-between.overflow-hidden.fixed.pin-t.pin-x.h-12.z-10(
+  data-turbolinks-permanent
+)
+  = link_to 'Mailpeek', root_path, class: 'text-white no-underline'
 
-  .float-right.navbar__menu(data-action="click->mailpeek#toggleSidebar")
+  .block.cursor-pointer(
+    class="md:hidden"
+    data-action="click->mailpeek#toggleSidebar"
+  )
     i.material-icon.text-white.md-2x
       | menu

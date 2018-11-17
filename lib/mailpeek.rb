@@ -23,7 +23,7 @@ module Mailpeek
     prep_folder
 
     Dir.foreach(location) do |filename|
-      next if filename == '.' || filename == '..'
+      next if ['.', '..'].include?(filename)
 
       path  = File.join(location, filename, 'mail')
       email = Email.new(filename, ::Mail.read(path))
@@ -31,7 +31,7 @@ module Mailpeek
       emails.push(email)
     end
 
-    emails.sort_by { |x| x.position }.reverse
+    emails.sort_by(&:position).reverse
   end
 
   def self.email(timestamp)
@@ -45,9 +45,9 @@ module Mailpeek
     prep_folder
 
     Dir.foreach(location) do |filename|
-      next if filename == '.' || filename == '..'
+      next if ['.', '..'].include?(filename)
 
-      unread += 1 unless File.exists?(File.join(location, filename, '.read'))
+      unread += 1 unless File.exist?(File.join(location, filename, '.read'))
     end
 
     unread

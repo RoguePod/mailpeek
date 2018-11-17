@@ -1,5 +1,5 @@
 doctype html
-html(lang="en")
+html.bg-white.antialiased.h-full.min-h-full(lang="en")
   head
     title
       | Mailpeek
@@ -9,7 +9,12 @@ html(lang="en")
     meta(name="turbolinks-cache-control" content="no-preview")
 
     = stylesheet_link_tag(\
-      '//fonts.googleapis.com/icon?family=Material+Icons|Source+Sans+Pro',
+      '//fonts.googleapis.com/icon?family=Material+Icons',
+      media: 'all',
+      'data-turbolinks-track' => 'reload'\
+    )
+    = stylesheet_link_tag(\
+      '//cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css',
       media: 'all',
       'data-turbolinks-track' => 'reload'\
     )
@@ -27,11 +32,11 @@ html(lang="en")
     )
 
     = csrf_meta_tags
-  body(data-controller="mailpeek")
-    .wrapper
-      = render 'nav'
-      = render 'sidebar'
-      main
-        = yield
-      = render 'footer'
+  body.font-sans.font-normal.text-black.leading-normal.text-base.h-full.min-h-full.flex.flex-col(
+    data-controller="mailpeek"
+  )
+    = render 'nav'
+    = render 'sidebar'
+    = yield
+    = render 'footer'
 

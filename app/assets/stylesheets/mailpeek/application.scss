@@ -3,12 +3,8 @@
  *= require_tree .
  */
 
-@import 'variables';
-@import 'bootstrap';
-
-body, html {
-  height: 100%;
-}
+$nav-height: 3rem;
+$sidebar-width: 20rem;
 
 .material-icon {
   font-family: 'Material Icons';
@@ -39,61 +35,61 @@ body, html {
 }
 
 .turbolinks-progress-bar {
-  height: 5px;
-  background-color: $white;
+  height: 3px;
+  background-color: #fff;
   z-index: 1000;
 }
 
-.wrapper {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto 1fr auto;
-  grid-template-areas:
-    'nav nav'
-    'aside main'
-    'aside footer';
-  min-height: 100%;
-}
-
-nav {
-  grid-area: nav;
+.m-h-300 {
+  min-height: 20rem;
 }
 
 main {
-  grid-area: main;
-  position: relative;
+  margin-left: $sidebar-width;
 }
 
-footer {
-  color: $white;
-  grid-area: footer;
-  height: 38px;
-  line-height: 38px;
-  padding: 0 .5rem;
-}
+.sidebar {
+  transition: transform .25s ease;
+  top: $nav-height;
+  width: $sidebar-width;
 
-@media (max-width: 768px) {
-  .wrapper {
-    grid-template-columns: none;
-    grid-template-areas:
-      'nav'
-      'main'
-      'footer';
+  &__empty {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &__unread {
+    background: #eeeeee;
   }
 }
 
-.navbar {
-  &__menu {
-    @include invisible(hidden);
-
-    cursor: pointer;
-  }
+.overlay {
+  background: transparent;
+  content: ' ';
+  top: $nav-height;
+  transform: translate(-100%, 0);
+  transition: background-color .25s ease;
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    &__menu {
-      @include invisible(visible);
+  .sidebar {
+    transform: translate(-$sidebar-width, 0);
+
+    &_open {
+      transform: translate(0, 0);
     }
   }
+
+  .overlay_open {
+    background-color: rgba(0, 0, 0, 0.25);
+    transform: translate(0, 0);
+  }
+
+  main {
+    margin-left: 0;
+  }
+}
+
+.transition {
+  transition: all .25s ease;
 }

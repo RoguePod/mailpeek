@@ -10,6 +10,7 @@ module Mailpeek
         format.json do
           @emails = emails
         end
+
         format.html do
           email = emails.first
 
@@ -54,13 +55,13 @@ module Mailpeek
     def destroy
       email = Mailpeek.email(params[:id])
 
-      email.destroy if email
+      email&.destroy
 
       redirect_to action: :index, params: request.query_parameters
     end
 
     def destroy_all
-      Mailpeek.emails.each { |x| x.destroy }
+      Mailpeek.emails.each(&:destroy)
 
       redirect_to root_path
     end

@@ -7,7 +7,7 @@ Mailpeek::Engine.routes.draw do
       get :read
     end
 
-    resources :attachments, only: [:show]
+    resources :attachments, only: %i[show]
   end
 
   root to: 'emails#index'

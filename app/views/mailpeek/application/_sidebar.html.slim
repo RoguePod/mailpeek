@@ -1,42 +1,38 @@
-aside.sidebar(
+.overlay.z-10.pin-x.pin-b.fixed(data-target="mailpeek.overlay")
+
+aside.sidebar.bg-white.flex.flex-col.h-full.fixed.pin-l.pin-b.z-20(
+  class="md:border-r"
   data-target="mailpeek.sidebar"
 )
-  .sidebar__bar(data-turbolinks-permanent)
-    form.sidebar__form
-      .input-group.input-group-sm
-        input.form-control(
-          name="q"
-          placeholder="Search Emails..."
-          type="search"
-          value="#{params[:q]}"
-        )
-        .input-group-append
-          - if params[:q].present?
-            = link_to(\
-              url_for(only_path: false, overwrite_params: nil),
-              class: 'btn btn-danger',
-              title: 'Clear Search',
-              data: { toggle: 'tooltip', placement: 'top' }\
-            ) do
-              i.material-icon
-                | close
-          button.btn.btn-primary(type="submit")
-            i.material-icon
-              | search
+  .flex.flex-center.bg-blue.p-2.items-center(
+    data-turbolinks-permanent
+  )
+    form.flex.flex-row.items-center.relative
+      input.appearance-none.border.rounded.w-full.py-2.pl-3.pr-6.text-grey-darker.leading-tight(
+        class="focus:outline-none focus:shadow-outline"
+        name="q"
+        placeholder="Search Emails..."
+        type="text"
+        value="#{params[:q]}"
+      )
+      button.text-blue.p-2.absolute.pin-r(
+        type="submit"
+        class="hover:text-blue-dark"
+      )
+        i.material-icon
+          | search
     - if @emails.any?
       = link_to(\
         read_emails_path(email_id: @email ? @email.id : ''),
-        class: 'sidebar__action',
-        title: 'Mark All Emails Read',
-        data: { toggle: 'tooltip', placement: 'top' }\
+        class: 'ml-4 text-white no-underline hover:text-yellow',
+        title: 'Mark All Emails Read'\
       ) do
         i.material-icon
           | playlist_add_check
     = link_to(\
       root_path,
-      class: 'sidebar__action',
-      title: 'Refresh Emails',
-      data: { toggle: 'tooltip', placement: 'top' }\
+      class: 'ml-4 text-white no-underline hover:text-yellow',
+      title: 'Refresh Emails'\
     ) do
       i.material-icon
         | refresh
@@ -44,11 +40,9 @@ aside.sidebar(
       = link_to(\
           emails_path,
           method: :delete,
-          class: 'sidebar__action',
+          class: 'ml-4 text-white no-underline hover:text-yellow',
           data: {\
-            confirm: 'This will remove all emails and cannot be undone.  Are you sure?',
-            placement: 'top',
-            toggle: 'tooltip'\
+            confirm: 'This will remove all emails and cannot be undone.  Are you sure?'\
           },
           title: 'Delete All Emails'\
         ) do
@@ -56,37 +50,37 @@ aside.sidebar(
           | delete
 
   - if @emails.any?
-    .sidebar__content
-      ul.sidebar__list.sidebar__top
+    .flex-1.relative
+      ul.sidebar__top.list-reset.pin.absolute.overflow-x-hidden.overflow-y-auto
         - @emails.each do |email|
           li.sidebar__email(
             data-id="#{email.id}"
             class="#{email.read ? 'sidebar__read' : 'sidebar__unread'}"
           )
-            = link_to email_path(email.id, request.query_parameters), class: "email-item #{@email.id == email.id ? 'email-item_selected' : ''}" do
-              .email-item__subject.pb-1.h6
+            = link_to email_path(email.id, request.query_parameters), class: "transition border-b border-grey-lighter cursor-pointer block p-2 hover:bg-blue-lighter no-underline text-blue #{@email.id == email.id ? 'bg-blue-lighter' : ''}" do
+              .email-item__subject.text-sm
                 = email.subject
-              .email-item__info.d-flex
-                .email-item__to.text-muted.d-flex.flex-wrap
+              .email-item__info.flex.flex-wrap.text-grey-dark.text-xs
+                .flex-1.flex.flex-wrap.pt-2
                   .pr-1
-                    strong To:
+                    | To:
                   .text-primary
                     | &lt;
                     = email.to.join('></div>,&nbsp;<div class="text-primary">&lt;').html_safe
                     | >
-                strong.email-item__date.text-muted
+                .email-item__date.pl-4.text-right.pt-2.ml-auto
                   = "#{time_ago_in_words(email.date)} ago"
 
-    - if @emails.size < @emails.total_count
-      .sidebar__more
-        = link_to(\
-          'More',
-          root_path(request.query_parameters.merge(per: @emails.size + 25)),
-          class: 'btn btn-primary btn-block'\
-        )
+        - if @emails.size < @emails.total_count
+          li
+            = link_to(\
+              'More',
+              root_path(\
+                request.query_parameters.merge(per: @emails.size + 25)\
+              ),
+              class: 'block bg-blue text-white font-bold py-2 px-4 hover:bg-blue-dark text-center no-underline'\
+            )
 
   - else
-    .sidebar__top.sidebar__empty.text-muted
+    .sidebar__top.sidebar__empty.text-grey-dark.pin-x.absolute.text-center
       | No Emails Found
-
-.overlay(data-target="mailpeek.overlay")

@@ -3,6 +3,7 @@
 require 'mail/check_delivery_params'
 
 module Mailpeek
+  # Public: Stores config info for Mailpeek
   class Configuration
     attr_accessor :location, :limit
 

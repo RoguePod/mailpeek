@@ -1,32 +1,14 @@
-# frozen_string_literal: true
-
 require: rubocop-rspec
 
 AllCops:
-  Include:
-    - '**/Rakefile'
-    - '**/Gemfile'
-    - '**/config.ru'
-    - '**/*.rake'
-    - '**/*.jbuilder'
-    - '**/*.gemspec'
-    - '**/*.rb'
   Exclude:
-    - '**/db/schema.rb'
-    - '**/script/**/*'
-    - '**/vendor/assets/**/*'
     - '**/bin/**/*'
-    - '**/gems/**/*'
-    - '**/node_modules/**/*'
-    - '**/app/services/diagram/**/*'
-    - !ruby/regexp /old_and_unused\.rb$/
 AbcSize:
   Max: 30
 BlockDelimiters:
   Enabled: false
 BlockLength:
   Exclude:
-    - '**/admin/**/*'
     - '**/spec/**/*'
     - '**/app/views/**/*.jbuilder'
     - '**/lib/**/*.rake'
@@ -40,8 +22,6 @@ Lambda:
     - 'app/models/**/*'
 LineLength:
   Max: 80
-  Exclude:
-    - 'config/initializers/content_security_policy.rb'
 Output:
   Exclude:
     - '**/*.rake'
@@ -65,8 +45,6 @@ Rails/UnknownEnv:
 Style/Documentation:
   Exclude:
     - '**/db/migrate/*'
-Naming/UncommunicativeMethodParamName:
-  Enabled: false
 RSpec/ExampleLength:
   Max: 15
 RSpec/NestedGroups:
