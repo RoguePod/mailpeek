@@ -12,6 +12,3 @@ spec/dummy/log/*.log
 spec/dummy/tmp/*
 !spec/dummy/tmp/mailpeek/*
 spec/dummy/.sass-cache
-
-/app/assets/javascripts/mailpeek/*
-!/app/assets/javascripts/mailpeek/application.coffee
