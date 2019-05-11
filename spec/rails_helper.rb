@@ -5,7 +5,6 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('dummy/config/environment.rb', __dir__)
 require 'rspec/rails'
 require 'rails-controller-testing'
-# require 'jbuilder'
 
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 

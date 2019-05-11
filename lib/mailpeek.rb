@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require 'mail'
-require 'mailpeek/engine'
 require 'mailpeek/email'
 require 'mailpeek/delivery'
 require 'mailpeek/configuration'
+require 'mailpeek/web'
+
+require 'json'
 
 # Public: Mailpeek
 module Mailpeek
@@ -59,3 +61,5 @@ module Mailpeek
     FileUtils.mkdir_p(location) unless File.directory?(location)
   end
 end
+
+require "mailpeek/railtie" if defined?(Rails::Railtie)

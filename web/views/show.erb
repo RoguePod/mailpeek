@@ -1,0 +1,101 @@
+<main class="flex-1 flex flex-col mt-12 mb-8 overflow-auto transition" data-controller="email">
+  <div class="p-4">
+    <div class="float-right pl-2">
+      <a
+        class="text-blue hover:text-blue-dark no-underline"
+        href="<%= root_path %>emails/<%= @email.id %>"
+        data-confirm="Are you sure you want to delete this email? This cannot be undone."
+        title="Delete This Email"
+        method="delete"
+      >
+        <i class="material-icons">delete</i>
+      </a>
+    </div>
+    <h3 class="text-blue pb-2"><%= @email.subject %></h3>
+    <dl class="pb-3">
+      <dt class="font-bold text-sm">From:</dt>
+      <dd class="text-sm"><%= @email.from.join(', ') %></dd>
+      <dt class="font-bold text-sm">To:</dt>
+      <dd class="text-sm"><%= @email.to.join(', ') %></dd>
+    </dl>
+    <details class="text-sm overflow-auto">
+      <summary class="text-blue cursor-pointer">
+        More Info
+      </summary>
+      <dl class="pt-2">
+        <dt class="font-bold text-sm">Message ID:</dt>
+        <dd class="text-sm"><%= @email.message_id %></dd>
+        <dt class="font-bold text-sm">Date:</dt>
+        <dd class="text-sm">
+          <%= @email.date.strftime('%a, %b %d %Y, %-l:%M%P %Z') %>
+        </dd>
+      </dl>
+    </details>
+  </div>
+  <ul class="list-reset px-4 border-b">
+    <li
+      class="mr-1 inline-block -mb-px <%= @email.html.present? ? '' : 'hidden' %>"
+      data-target="email.tabHtml"
+    >
+      <div
+        class="cursor-pointer py-2 px-4 text-blue border-l border-t border-r rounded-t border-transparent hover:text-blue-darker"
+        data-action="click->email#showHtml"
+      >
+        HTML
+      </div>
+    </li>
+    <li
+      class="mr-1 inline-block -mb-px <%= @email.text.present? ? '' : 'hidden' %>"
+      data-target="email.tabText"
+    >
+      <div
+        class="cursor-pointer py-2 px-4 text-blue border-l border-t border-r rounded-t border-transparent hover:text-blue-darker"
+        data-action="click->email#showText"
+      >
+        Text
+      </div>
+    </li>
+    <li
+      class="mr-1 inline-block -mb-px <%= @email.attachments.any? ? '' : 'hidden' %>"
+      data-target="email.tabAttachments"
+    >
+      <div
+        class="cursor-pointer py-2 px-4 text-blue border-l border-t border-r rounded-t border-transparent hover:text-blue-darker"
+        data-action="click->email#showAttachments"
+      >
+        Attachments
+      </div>
+    </li>
+  </ul>
+
+  <iframe
+    class="hidden flex-1 w-full h-full"
+    data-target="email.html"
+    frameborder="0"
+    seamless=""
+    srcdoc="<%= @email.html %>"
+  ></iframe>
+
+  <div
+    class="p-4 hidden flex-1 overflow-auto m-h-300"
+    data-target="email.text"
+  >
+    <%= simple_format(h(@email.text)) %>
+  </div>
+
+  <div class="py-3 hidden flex-1 overflow-auto" data-target="email.attachments">
+    <ul>
+      <% @email.attachments.each do |attachment| %>
+        <li>
+          <a
+            class="text-blue hover:text-dark-blue"
+            href="<%= root_path %>/emails/<%= @email.id %>/attachments/<%= attachment %>"
+            target="_blank"
+          >
+            <%= attachment %>
+          </a>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</main>

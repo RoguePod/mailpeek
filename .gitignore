@@ -5,6 +5,7 @@ pkg/
 coverage/
 node_modules/
 stats.json
+Gemfile.lock
 
 spec/dummy/db/*.sqlite3
 spec/dummy/db/*.sqlite3-journal

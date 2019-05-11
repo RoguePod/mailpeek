@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html class="bg-white antialiased h-full min-h-full" lang="en">
+  <head>
+    <title>Mailpeek</title>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="no-preview" name="turbolinks-cache-control">
+    <meta name="google" content="notranslate">
+
+    <link href="//fonts.googleapis.com/icon?family=Material+Icons" media="screen" rel="stylesheet" type="text/css" data-turbolinks-track="reload">
+    <link href="<%= root_path %>stylesheets/tailwind.css" media="screen" rel="stylesheet" type="text/css" data-turbolinks-track="reload">
+    <link href="<%= root_path %>stylesheets/application.css" media="screen" rel="stylesheet" type="text/css" data-turbolinks-track="reload">
+
+    <script type="text/javascript" src="<%= root_path %>javascripts/jquery.js" data-turbolinks-track="reload"></script>
+    <script type="text/javascript" src="<%= root_path %>javascripts/isEqual.js" data-turbolinks-track="reload"></script>
+    <script type="text/javascript" src="<%= root_path %>javascripts/rails-ujs.js" data-turbolinks-track="reload"></script>
+    <script type="text/javascript" src="<%= root_path %>javascripts/turbolinks.js" data-turbolinks-track="reload"></script>
+    <script type="text/javascript" src="<%= root_path %>javascripts/stimulus.js" data-turbolinks-track="reload"></script>
+    <script type="text/javascript" src="<%= root_path %>javascripts/application.js" data-turbolinks-track="reload"></script>
+  </head>
+
+  <body class="font-sans font-normal text-black leading-normal text-base h-full min-h-full flex flex-col" data-controller="mailpeek">
+    <%= erb :_nav %>
+    <%= erb :_sidebar %>
+    <%= yield %>
+    <%= erb :_footer %>
+  </body>
+</html>
