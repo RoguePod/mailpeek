@@ -62,4 +62,4 @@ module Mailpeek
   end
 end
 
-require "mailpeek/railtie" if defined?(Rails::Railtie)
+require 'mailpeek/railtie' if defined?(Rails::Railtie)

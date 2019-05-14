@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Mailpeek
+  # Public: WebAction
   class WebAction
     attr_accessor :env, :block, :type
 
@@ -17,14 +18,16 @@ module Mailpeek
     end
 
     def redirect(location)
-      throw :halt, [302, { "Location" => "#{request.base_url}#{location}" }, []]
+      throw :halt, [302, { 'Location' => "#{request.base_url}#{location}" }, []]
     end
 
     def params
-      indifferent_hash = Hash.new {|hash,key| hash[key.to_s] if Symbol === key }
+      indifferent_hash = Hash.new do |hash, key|
+        hash[key.to_s] if Symbol == key
+      end
 
       indifferent_hash.merge! request.params
-      route_params.each {|k,v| indifferent_hash[k.to_s] = v }
+      route_params.each { |k, v| indifferent_hash[k.to_s] = v }
 
       indifferent_hash
     end
@@ -34,7 +37,7 @@ module Mailpeek
     end
 
     def erb(content, options = {})
-      if content.kind_of? Symbol
+      if content.is_a? Symbol
         unless respond_to?(:"_erb_#{content}")
           src = ERB.new(File.read("#{Web.settings.views}/#{content}.erb")).src
           WebAction.class_eval("def _erb_#{content}\n#{src}\n end")
@@ -52,28 +55,37 @@ module Mailpeek
     end
 
     def render(engine, content, options = {})
-      raise "Only erb templates are supported" if engine != :erb
+      raise 'Only erb templates are supported' if engine != :erb
 
       erb(content, options)
     end
 
     def json(payload)
-      [200, { "Content-Type" => "application/json", "Cache-Control" => "no-cache" }, [JSON.generate(payload)]]
+      [
+        200,
+        { 'Content-Type' => 'application/json', 'Cache-Control' => 'no-cache' },
+        [JSON.generate(payload)]
+      ]
     end
 
     def initialize(env, block)
       @_erb = false
       @env = env
       @block = block
+
+      # rubocop:disable Style/ClassVars
       @@files ||= {}
+      # rubocop:enable Style/ClassVars
     end
 
     private
 
     def _erb(file, locals)
-      locals.each {|k, v| define_singleton_method(k){ v } unless (singleton_methods.include? k)} if locals
+      locals&.each do |k, v|
+        define_singleton_method(k) { v } unless singleton_methods.include?(k)
+      end
 
-      if file.kind_of?(String)
+      if file.is_a?(String)
         ERB.new(file).result(binding)
       else
         send(:"_erb_#{file}")

@@ -1,7 +1,9 @@
 # frozen_string_literal: true
+
 require 'rack'
 
 module Mailpeek
+  # Public: WebRouter
   module WebRouter
     GET = 'GET'
     DELETE = 'DELETE'
@@ -35,7 +37,9 @@ module Mailpeek
     end
 
     def route(method, path, &block)
-      @routes ||= { GET => [], POST => [], PUT => [], PATCH => [], DELETE => [], HEAD => [] }
+      @routes ||= {
+        GET => [], POST => [], PUT => [], PATCH => [], DELETE => [], HEAD => []
+      }
 
       @routes[method] << WebRoute.new(method, path, block)
       @routes[HEAD] << WebRoute.new(method, path, block) if method == GET
@@ -47,24 +51,27 @@ module Mailpeek
 
       # There are servers which send an empty string when requesting the root.
       # These servers should be ashamed of themselves.
-      path_info = "/" if path_info == ""
+      path_info = '/' if path_info == ''
 
       @routes[request_method].each do |route|
-        if params = route.match(request_method, path_info)
-          env[ROUTE_PARAMS] = params
+        params = route.match(request_method, path_info)
 
-          return WebAction.new(env, route.block)
-        end
+        next unless params
+
+        env[ROUTE_PARAMS] = params
+
+        return WebAction.new(env, route.block)
       end
 
       nil
     end
   end
 
+  # Public: WebRoute
   class WebRoute
     attr_accessor :request_method, :pattern, :block, :name
 
-    NAMED_SEGMENTS_PATTERN = /\/([^\/]*):([^\.:$\/]+)/
+    NAMED_SEGMENTS_PATTERN = %r{\/([^\/]*):([^\.:$\/]+)}.freeze
 
     def initialize(request_method, pattern, block)
       @request_method = request_method
@@ -86,12 +93,13 @@ module Mailpeek
       end
     end
 
-    def match(request_method, path)
+    def match(_request_method, path)
       case matcher
       when String
         {} if path == matcher
       else
-        if path_match = path.match(matcher)
+        path_match = path.match(matcher)
+        if path_match
           Hash[path_match.names.map(&:to_sym).zip(path_match.captures)]
         end
       end

@@ -23,14 +23,10 @@ Gem::Specification.new do |s|
 
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency 'mail', '>= 2.7.1'
-  s.add_dependency 'rack', '>= 1.5.0'
-  s.add_dependency 'rack-protection', '>= 1.5.0'
+  s.add_dependency 'mail', '~> 2.7.1'
+  s.add_dependency 'rack', '~> 2.0.7'
+  s.add_dependency 'rack-protection', '~> 2.0.5'
 
-  s.add_development_dependency 'guard-rubocop', '>= 1.3.0'
-  s.add_development_dependency 'rails-controller-testing', '>= 1.0.2'
-  s.add_development_dependency 'rspec-rails', '>= 3.8.1'
-  s.add_development_dependency 'rubocop-performance', '>= 0'
-  s.add_development_dependency 'rubocop-rspec', '>= 1.30.1'
-  s.add_development_dependency 'simplecov', '>= 0.16.1'
+  s.add_development_dependency 'rubocop', '~> 0.69.0'
+  s.add_development_dependency 'rubocop-performance', '~> 1.3.0'
 end

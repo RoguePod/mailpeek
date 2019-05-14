@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 module Mailpeek
+  # Public: WebApplication
   class WebApplication
     extend WebRouter
 
-    CONTENT_LENGTH = "Content-Length"
-    CONTENT_TYPE = "Content-Type"
+    CONTENT_LENGTH = 'Content-Length'
+    CONTENT_TYPE = 'Content-Type'
     CSP_HEADER = [
       "default-src 'self' https: http:",
       "child-src 'self'",
@@ -38,7 +39,7 @@ module Mailpeek
       # nothing, backwards compatibility
     end
 
-    get "/" do
+    get '/' do
       email = emails.first
 
       if email.blank?
@@ -53,10 +54,7 @@ module Mailpeek
         { id: email.id, read: email.read }
       end
 
-      json(
-        emails: all_emails,
-        unread: unread
-      )
+      json(emails: all_emails, unread: unread)
     end
 
     get '/read' do
@@ -71,7 +69,7 @@ module Mailpeek
       end
     end
 
-    get "/emails/:email_id/attachments/:id" do
+    get '/emails/:email_id/attachments/:id' do
       location = Mailpeek.configuration.location
       path     = File.join(
         location, route_params['email_id'], 'attachments',
@@ -81,7 +79,7 @@ module Mailpeek
       send_file path
     end
 
-    get "/emails/:id" do
+    get '/emails/:id' do
       @emails = Mailpeek.emails
 
       if params['q'].present?
@@ -114,9 +112,16 @@ module Mailpeek
       redirect root_path
     end
 
+    # rubocop:disable Metrics/MethodLength
     def call(env)
       action = self.class.match(env)
-      return [404, {"Content-Type" => "text/plain", "X-Cascade" => "pass" }, ["Not Found"]] unless action
+      unless action
+        return [
+          404,
+          { 'Content-Type' => 'text/plain', 'X-Cascade' => 'pass' },
+          ['Not Found']
+        ]
+      end
 
       resp = catch(:halt) do
         app = @klass
@@ -131,17 +136,17 @@ module Mailpeek
       end
 
       resp = case resp
-      when Array
-        resp
-      else
-        headers = {
-          "Content-Type" => "text/html",
-          "Cache-Control" => "no-cache",
-          "Content-Security-Policy" => CSP_HEADER
-        }
+             when Array
+               resp
+             else
+               headers = {
+                 'Content-Type' => 'text/html',
+                 'Cache-Control' => 'no-cache',
+                 'Content-Security-Policy' => CSP_HEADER
+               }
 
-        [200, headers, [resp]]
-      end
+               [200, headers, [resp]]
+             end
 
       resp[1] = resp[1].dup
 
@@ -149,8 +154,9 @@ module Mailpeek
 
       resp
     end
+    # rubocop:enable Metrics/MethodLength
 
-    def self.helpers(mod=nil, &block)
+    def self.helpers(mod = nil, &block)
       if block_given?
         WebAction.class_eval(&block)
       else
@@ -158,12 +164,12 @@ module Mailpeek
       end
     end
 
-    def self.before(path=nil, &block)
-      befores << [path && Regexp.new("\\A#{path.gsub("*", ".*")}\\z"), block]
+    def self.before(path = nil, &block)
+      befores << [path && Regexp.new("\\A#{path.gsub('*', '.*')}\\z"), block]
     end
 
-    def self.after(path=nil, &block)
-      afters << [path && Regexp.new("\\A#{path.gsub("*", ".*")}\\z"), block]
+    def self.after(path = nil, &block)
+      afters << [path && Regexp.new("\\A#{path.gsub('*', '.*')}\\z"), block]
     end
 
     def self.run_befores(app, action)
@@ -175,8 +181,8 @@ module Mailpeek
     end
 
     def self.run_hooks(hooks, app, action)
-      hooks.select { |p,_| !p || p =~ action.env[WebRouter::PATH_INFO] }.
-            each {|_,b| action.instance_exec(action.env, app, &b) }
+      hooks.select { |p, _| !p || p =~ action.env[WebRouter::PATH_INFO] }
+           .each { |_, b| action.instance_exec(action.env, app, &b) }
     end
 
     def self.befores

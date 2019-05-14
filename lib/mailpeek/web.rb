@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'erb'
 
 require 'mailpeek/web/router'
@@ -11,13 +12,14 @@ require 'rack/protection'
 require 'rack/builder'
 require 'rack/file'
 
+# Public: Mailpeek
 module Mailpeek
+  # Public: Base Web Class
   class Web
     ROOT = File.expand_path("#{File.dirname(__FILE__)}/../../web")
     VIEWS = "#{ROOT}/views"
     LAYOUT = "#{VIEWS}/layout.erb"
     ASSETS = "#{ROOT}/assets"
-
 
     class << self
       def settings
@@ -32,20 +34,20 @@ module Mailpeek
         middlewares << [middleware_args, block]
       end
 
-
       def views
         @views ||= VIEWS
       end
 
       def enable(*opts)
-        opts.each {|key| set(key, true) }
+        opts.each { |key| set(key, true) }
       end
 
       def disable(*opts)
-        opts.each {|key| set(key, false) }
+        opts.each { |key| set(key, false) }
       end
 
-      # Helper for the Sinatra syntax: Mailpeek::Web.set(:session_secret, Rails.application.secrets...)
+      # Helper for the Sinatra syntax:
+      # Mailpeek::Web.set(:session_secret, Rails.application.secrets...)
       def set(attribute, value)
         send(:"#{attribute}=", value)
       end
@@ -55,7 +57,7 @@ module Mailpeek
     end
 
     def self.inherited(child)
-      child.app_url = self.app_url
+      child.app_url = app_url
     end
 
     def settings
@@ -84,11 +86,11 @@ module Mailpeek
     end
 
     def enable(*opts)
-      opts.each {|key| set(key, true) }
+      opts.each { |key| set(key, true) }
     end
 
     def disable(*opts)
-      opts.each {|key| set(key, false) }
+      opts.each { |key| set(key, false) }
     end
 
     def set(attribute, value)
@@ -102,8 +104,8 @@ module Mailpeek
     private
 
     def using?(middleware)
-      middlewares.any? do |(m,_)|
-        m.kind_of?(Array) && (m[0] == middleware || m[0].kind_of?(middleware))
+      middlewares.any? do |(m, _)|
+        m.is_a?(Array) && (m[0] == middleware || m[0].is_a?(middleware))
       end
     end
 
@@ -112,13 +114,16 @@ module Mailpeek
       klass = self.class
 
       ::Rack::Builder.new do
-        %w(stylesheets javascripts images).each do |asset_dir|
+        %w[stylesheets javascripts images].each do |asset_dir|
           map "/#{asset_dir}" do
-            run ::Rack::File.new("#{ASSETS}/#{asset_dir}", { 'Cache-Control' => 'public, max-age=86400' })
+            run ::Rack::File.new(
+              "#{ASSETS}/#{asset_dir}",
+              'Cache-Control' => 'public, max-age=86400'
+            )
           end
         end
 
-        middlewares.each {|middleware, block| use(*middleware, &block) }
+        middlewares.each { |middleware, block| use(*middleware, &block) }
 
         run WebApplication.new(klass)
       end
@@ -127,5 +132,7 @@ module Mailpeek
 
   Mailpeek::WebApplication.helpers WebHelpers
 
-  Mailpeek::WebAction.class_eval "def _render\n#{ERB.new(File.read(Web::LAYOUT)).src}\nend"
+  Mailpeek::WebAction.class_eval(
+    "def _render\n#{ERB.new(File.read(Web::LAYOUT)).src}\nend"
+  )
 end

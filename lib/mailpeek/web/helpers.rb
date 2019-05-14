@@ -1,23 +1,24 @@
 # frozen_string_literal: true
+
 require 'uri'
 require 'set'
 require 'yaml'
 require 'cgi'
 
 module Mailpeek
-  # This is not a public API
+  # Private: WebHelpers
   module WebHelpers
     def poll_path
       if current_path != '' && params['poll']
         root_path + current_path
       else
-        ""
+        ''
       end
     end
 
     # mperham/sidekiq#3243
     def unfiltered?
-      yield unless env['PATH_INFO'].start_with?("/filter/")
+      yield unless env['PATH_INFO'].start_with?('/filter/')
     end
 
     def emails
@@ -42,28 +43,35 @@ module Mailpeek
     end
 
     def current_path
-      @current_path ||= request.path_info.gsub(/^\//,'')
+      @current_path ||= request.path_info.gsub(%r{^\/}, '')
     end
 
     def relative_time(time)
       stamp = time.getutc.iso8601
-      %{<time class="ltr" dir="ltr" title="#{stamp}" datetime="#{stamp}">#{time}</time>}
+      %(<time class="ltr" dir="ltr" title="#{stamp}" datetime="#{stamp}">
+        #{time}</time>)
     end
 
     def parse_params(params)
-      score, jid = params.split("-", 2)
+      score, jid = params.split('-', 2)
       [score.to_f, jid]
     end
 
     def truncate(text, truncate_after_chars = 2000)
-      truncate_after_chars && text.size > truncate_after_chars ? "#{text[0..truncate_after_chars]}..." : text
+      if truncate_after_chars && text.size > truncate_after_chars
+        return "#{text[0..truncate_after_chars]}..."
+      end
+
+      text
     end
 
     def h(text)
-      sanitized = ::Rack::Utils.escape_html(text)
+      ::Rack::Utils.escape_html(text)
     rescue ArgumentError => e
       raise unless e.message.eql?('invalid byte sequence in UTF-8')
-      text.encode!('UTF-16', 'UTF-8', invalid: :replace, replace: '').encode!('UTF-8', 'UTF-16')
+
+      text.encode!('UTF-16', 'UTF-8', invalid: :replace, replace: '')
+          .encode!('UTF-8', 'UTF-16')
       retry
     end
 
@@ -95,20 +103,6 @@ module Mailpeek
       else
         redirect url
       end
-    end
-
-    def environment_title_prefix
-      environment = ENV['RAILS_ENV'] || ENV['RACK_ENV'] || 'development'
-
-      "[#{environment.upcase}] " unless environment == "production"
-    end
-
-    def product_version
-      "Mailpeek v#{Mailpeek::VERSION}"
-    end
-
-    def server_utc_time
-      Time.now.utc.strftime('%H:%M:%S UTC')
     end
   end
 end

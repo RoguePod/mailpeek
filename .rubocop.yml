@@ -1,6 +1,5 @@
 require:
   - rubocop-performance
-  - rubocop-rspec
 
 AllCops:
   Exclude:
@@ -12,11 +11,7 @@ BlockDelimiters:
 BlockLength:
   Exclude:
     - '**/spec/**/*'
-    - '**/app/views/**/*.jbuilder'
     - '**/lib/**/*.rake'
-    - '**/config/routes.rb'
-    - '**/config/god*'
-    - '**/config/environments/*'
 ClassLength:
   Max: 150
 Lambda:
@@ -38,16 +33,8 @@ FileName:
     - '**/Capfile'
 Lint/AmbiguousBlockAssociation:
   Enabled: false
-Rails/UnknownEnv:
-  Environments:
-    - development
-    - test
-    - staging
-    - production
 Style/Documentation:
   Exclude:
     - '**/db/migrate/*'
-RSpec/ExampleLength:
-  Max: 15
-RSpec/NestedGroups:
-  Max: 4
+Style/EvalWithLocation:
+  Enabled: false
