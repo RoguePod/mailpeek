@@ -17,9 +17,7 @@ Gem::Specification.new do |s|
     'developing in Rails'
   s.license     = 'MIT'
 
-  s.files = Dir[
-    '{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.rdoc'
-  ]
+  s.files = `git ls-files`.split("\n")
 
   s.test_files = Dir['spec/**/*']
 
