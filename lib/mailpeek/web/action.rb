@@ -22,14 +22,16 @@ module Mailpeek
     end
 
     def params
-      indifferent_hash = Hash.new do |hash, key|
-        hash[key.to_s] if Symbol == key
-      end
+      return @params if @params
 
-      indifferent_hash.merge! request.params
-      route_params.each { |k, v| indifferent_hash[k.to_s] = v }
+      @params =
+        route_params.merge(request.params).inject({}) do |results, (key, value)|
+          results[key.to_s] = value
+          results[key.to_sym] = value
+          results
+        end
 
-      indifferent_hash
+      @params
     end
 
     def route_params
@@ -65,6 +67,18 @@ module Mailpeek
         200,
         { 'Content-Type' => 'application/json', 'Cache-Control' => 'no-cache' },
         [JSON.generate(payload)]
+      ]
+    end
+
+    def send_file(path, filename)
+      response = [
+        200,
+        {
+          'Cache-Control' => 'no-cache',
+          'Content-Type' => 'application/octet-stream',
+          'Content-Disposition' => "attachment; filename=\"#{filename}\""
+        },
+        [File.read(path)]
       ]
     end
 

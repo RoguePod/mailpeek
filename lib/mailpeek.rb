@@ -5,6 +5,7 @@ require 'mailpeek/email'
 require 'mailpeek/delivery'
 require 'mailpeek/configuration'
 require 'mailpeek/web'
+require 'mailpeek/version'
 
 require 'json'
 

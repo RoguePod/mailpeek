@@ -62,36 +62,27 @@ module Mailpeek
         email.read = true
       end
 
-      if params['email_id'].present?
-        redirect "#{root_path}emails/#{params['email_id']}"
+      if params[:email_id].present?
+        redirect "#{root_path}emails/#{params[:email_id]}"
       else
-        redirect_with_query root_path # request.query_parameters
+        redirect_with_query root_path
       end
     end
 
     get '/emails/:email_id/attachments/:id' do
-      location = Mailpeek.configuration.location
-      path     = File.join(
-        location, route_params['email_id'], 'attachments',
-        "#{route_params['id']}.#{params['format']}"
+      path = File.join(
+        Mailpeek.configuration.location, params[:email_id], 'attachments',
+        params[:id]
       )
 
-      send_file path
+      send_file(path, params[:id])
     end
 
     get '/emails/:id' do
-      @emails = Mailpeek.emails
-
-      if params['q'].present?
-        @emails = @emails.select { |x| x.match?(params['q']) }
-      end
-
-      @total_count = @emails.size
-      @emails = @emails.first(params['per'] || 10)
-      @email  = @emails.detect { |x| x.id.to_s == route_params[:id].to_s }
+      @email = emails.detect { |x| x.id.to_s == params[:id].to_s }
 
       if @email.blank?
-        redirect_with_query root_path # request.query_parameters
+        redirect_with_query root_path
       else
         @email.read = true
         erb(:show)
@@ -99,11 +90,11 @@ module Mailpeek
     end
 
     delete '/emails/:id' do
-      email = Mailpeek.email(route_params['id'])
+      email = Mailpeek.email(params[:id])
 
       email&.destroy
 
-      redirect_with_query root_path # request.query_parameters
+      redirect_with_query root_path
     end
 
     delete '/emails' do
@@ -115,6 +106,7 @@ module Mailpeek
     # rubocop:disable Metrics/MethodLength
     def call(env)
       action = self.class.match(env)
+
       unless action
         return [
           404,
@@ -123,36 +115,31 @@ module Mailpeek
         ]
       end
 
-      resp = catch(:halt) do
-        app = @klass
-        self.class.run_befores(app, action)
-        begin
-          resp = action.instance_exec env, &action.block
-        ensure
-          self.class.run_afters(app, action)
-        end
-
-        resp
+      response = catch(:halt) do
+        response = action.instance_exec(env, &action.block)
       end
 
-      resp = case resp
-             when Array
-               resp
-             else
-               headers = {
-                 'Content-Type' => 'text/html',
-                 'Cache-Control' => 'no-cache',
-                 'Content-Security-Policy' => CSP_HEADER
-               }
+      response =
+        case response
+        when Array
+          response
+        else
+          headers = {
+            'Content-Type' => 'text/html',
+            'Cache-Control' => 'no-cache',
+            'Content-Security-Policy' => CSP_HEADER
+          }
 
-               [200, headers, [resp]]
-             end
+          [200, headers, [response]]
+        end
 
-      resp[1] = resp[1].dup
+      response[1] = response[1].dup
 
-      resp[1][CONTENT_LENGTH] = resp[2].inject(0) { |l, p| l + p.bytesize }.to_s
+      response[1][CONTENT_LENGTH] = response[2].inject(0) do |l, p|
+        l + p.bytesize
+      end.to_s
 
-      resp
+      response
     end
     # rubocop:enable Metrics/MethodLength
 
@@ -162,35 +149,6 @@ module Mailpeek
       else
         WebAction.send(:include, mod)
       end
-    end
-
-    def self.before(path = nil, &block)
-      befores << [path && Regexp.new("\\A#{path.gsub('*', '.*')}\\z"), block]
-    end
-
-    def self.after(path = nil, &block)
-      afters << [path && Regexp.new("\\A#{path.gsub('*', '.*')}\\z"), block]
-    end
-
-    def self.run_befores(app, action)
-      run_hooks(befores, app, action)
-    end
-
-    def self.run_afters(app, action)
-      run_hooks(afters, app, action)
-    end
-
-    def self.run_hooks(hooks, app, action)
-      hooks.select { |p, _| !p || p =~ action.env[WebRouter::PATH_INFO] }
-           .each { |_, b| action.instance_exec(action.env, app, &b) }
-    end
-
-    def self.befores
-      @befores ||= []
-    end
-
-    def self.afters
-      @afters ||= []
     end
   end
 end

@@ -11,7 +11,6 @@ module Mailpeek
 
     attr_accessor :settings
 
-    # rubocop:disable Style/GuardClause
     def initialize(options = {})
       options[:location] ||= Mailpeek.configuration.location
       options[:limit] ||= Mailpeek.configuration.limit
@@ -29,7 +28,6 @@ module Mailpeek
 
       self.settings = options
     end
-    # rubocop:enable Style/GuardClause
 
     def deliver!(mail)
       check_delivery_params(mail) if respond_to?(:check_delivery_params)

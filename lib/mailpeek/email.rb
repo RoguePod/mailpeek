@@ -29,7 +29,7 @@ module Mailpeek
     end
 
     def match?(query)
-      subject.match(query) || text.match(query) || html.match(query)
+      subject&.match(query) || text&.match(query) || html&.match(query)
     end
 
     def destroy
@@ -75,10 +75,10 @@ module Mailpeek
     def parse_body
       body = mail.body.decoded.force_encoding('utf-8')
 
-      if mail.text?
-        @text = body
-      else
+      if mail.content_type.match(/html/)
         @html = body
+      else
+        @text = body
       end
     end
   end

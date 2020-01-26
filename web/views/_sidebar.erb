@@ -1,16 +1,16 @@
-<div class="overlay z-10 pin-x pin-b fixed" data-target="mailpeek.overlay"></div>
+<div class="overlay z-10 inset-x-0 bottom-0 fixed" data-target="mailpeek.overlay"></div>
 
-<aside class="sidebar bg-white flex flex-col h-full fixed pin-l pin-b z-20 md:border-r" data-target="mailpeek.sidebar">
-  <div class="flex flex-center bg-blue p-2 items-center" data-turbolinks-permanent="">
-    <form class="flex flex-row items-center relative">
-      <input class="appearance-none border rounded w-full py-2 pl-3 pr-6 text-grey-darker leading-tight focus:outline-none focus:shadow-outline" name="q" placeholder="Search Emails..." type="text" value="<%= params[:q] %>">
-      <button class="text-blue p-2 absolute pin-r hover:text-blue-dark" type="submit">
+<aside class="sidebar bg-white flex flex-col fixed left-0 bottom-0 z-20 md:border-r" data-target="mailpeek.sidebar">
+  <div class="flex flex-center bg-gray-300 p-2 items-center" data-turbolinks-permanent="">
+    <form class="flex flex-row items-center relative" method="get">
+      <input class="appearance-none border rounded w-full py-2 pl-3 pr-6 text-grey-700 leading-tight focus:outline-none focus:shadow-outline" name="q" placeholder="Search Emails..." type="text" value="<%= params[:q] %>">
+      <button class="text-blue-500 p-2 absolute right-0 hover:text-blue-600" type="submit">
         <i class="material-icons">search</i>
       </button>
     </form>
-    <% if @emails.any? %>
+    <% if emails.any? %>
       <a
-        class="ml-4 text-white no-underline hover:text-yellow"
+        class="ml-4 text-blue-500 no-underline hover:text-blue-600 leading-none block"
         href="<%= root_path %>read?email_id=<%= @email ? @email.id : '' %>"
         title="Mark All Emails Read"
       >
@@ -18,67 +18,60 @@
       </a>
     <% end %>
     <a
-      class="ml-4 text-white no-underline hover:text-yellow"
+      class="ml-4 text-blue-500 no-underline hover:text-blue-600 leading-none block"
       href="<%= root_path %>"
       title="Refresh Emails"
     >
-      <i class="material-icons">delete</i>
+      <i class="material-icons">refresh</i>
     </a>
-    <% if @emails.any? %>
+    <% if emails.any? %>
       <a
-        class="ml-4 text-white no-underline hover:text-yellow"
+        class="ml-4 text-blue-500 no-underline hover:text-blue-600 leading-none block"
         data-confirm="This will remove all emails and cannot be undone.  Are you sure?"
-        href="<%= root_path %>"
-        method="delete"
+        data-method="delete"
+        href="<%= root_path %>emails"
         title="Delete All Emails"
       >
-        <i class="material-icons">refresh</i>
+        <i class="material-icons">delete</i>
       </a>
     <% end %>
   </div>
-  <% if @emails.any? %>
-    <div class="flex-1 relative">
-      <ul class="sidebar__top list-reset pin absolute overflow-x-hidden overflow-y-auto">
-        <% @emails.each do |email| %>
-          <li data-id="<%= email.id %>" class="sidebar__email <%= email.read ? 'sidebar__read' : 'sidebar__unread' %>">
-            <a
-              class="transition border-b border-grey-lighter cursor-pointer block p-2 hover:bg-blue-lighter no-underline text-blue <%= @email.id == email.id ? 'bg-blue-lighter' : '' %>"
-              href="<%= root_path %>emails/<%= email.id %>"
-            >
-              <div class="email-item__subject text-sm">
-                <%= email.subject %>
+  <% if emails.any? %>
+    <div class="flex-1 relative sidebar__top h-full  overflow-x-hidden overflow-y-auto">
+      <% emails.each do |email| %>
+        <div data-id="<%= email.id %>" class="sidebar__email <%= email.read ? 'sidebar__read' : 'sidebar__unread' %>">
+          <a
+            class="transition border-b border-grey-300 cursor-pointer block p-2 hover:bg-yellow-200 no-underline text-blue-500 <%= @email.id == email.id ? 'bg-yellow-200' : '' %>"
+            href="<%= root_path %>emails/<%= email.id %>?<%= query_string %>"
+          >
+            <div class="text-sm">
+              <%= email.subject %>
+            </div>
+            <div class="flex flex-no-wrap text-gray-600 text-xs pt-2">
+              <div class="flex-1 truncate text-primary">
+                To: <%= email.to.join(', ') %>
               </div>
-              <div class="email-item__info flex flex-wrap text-grey-dark text-xs">
-                <div class="flex-1 flex flex-wrap pt-2">
-                  <div class="pr-1">To:</div>
-                  <div class="text-primary">
-                    <
-                    <%= email.to.join('></div>,&nbsp;<div class="text-primary">&lt;').html_safe %>
-                    >
-                  </div>
-                </div>
-                <div class="email-item__date pl-4 text-right pt-2 ml-auto">
-                  <%= email.date %>
-                </div>
+              <div class="pl-2 text-right">
+                <%= email.date.strftime('%F %r') %>
               </div>
-            </a>
-          </li>
-        <% end %>
-        <% if @emails.size < @total_count %>
-          <li>
-            <a
-              class="block bg-blue text-white font-bold py-2 px-4 hover:bg-blue-dark text-center no-underline"
-              href="<%= root_path %>?per=<%= @emails.size + 25 %>"
-              title="Refresh Emails"
-            >
-              More
-            </a>
-          </li>
-        <% end %>
-      </ul>
+            </div>
+          </a>
+        </div>
+      <% end %>
+      <% if emails.size < @total_count %>
+        <div>
+          <a
+            class="block bg-blue-500 text-white font-bold py-2 px-4 hover:bg-blue-600 text-center no-underline"
+            href="<%= root_path %>?per=<%= emails.size + 10 %>&q=<%= params[:q] %>"
+            title="Refresh Emails"
+          >
+            More
+          </a>
+        </div>
+      <% end %>
     </div>
   <% else %>
-    <div class="sidebar__top sidebar__empty text-grey-dark pin-x absolute text-center">
+    <div class="sidebar__top sidebar__empty text-grey-600 inset-x-0 absolute text-center">
       No Emails Found
     </div>
   <% end %>

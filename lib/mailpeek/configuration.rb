@@ -9,7 +9,7 @@ module Mailpeek
 
     def initialize
       @location = Rails.root.join('tmp', 'mailpeek')
-      @limit    = 25
+      @limit = 50
     end
   end
 end

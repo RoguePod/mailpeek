@@ -3,10 +3,14 @@ Stimulus 1.1.1
 Copyright © 2019 Basecamp, LLC
  */
 (function(global, factory) {
-  typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define([ "exports" ], factory) : factory(global.Stimulus = {});
+  typeof exports === "object" && typeof module !== "undefined"
+    ? factory(exports)
+    : typeof define === "function" && define.amd
+    ? define(["exports"], factory)
+    : factory((global.Stimulus = {}));
 })(this, function(exports) {
   "use strict";
-  var EventListener = function() {
+  var EventListener = (function() {
     function EventListener(eventTarget, eventName) {
       this.eventTarget = eventTarget;
       this.eventName = eventName;
@@ -38,7 +42,8 @@ Copyright © 2019 Basecamp, LLC
     Object.defineProperty(EventListener.prototype, "bindings", {
       get: function() {
         return Array.from(this.unorderedBindings).sort(function(left, right) {
-          var leftIndex = left.index, rightIndex = right.index;
+          var leftIndex = left.index,
+            rightIndex = right.index;
           return leftIndex < rightIndex ? -1 : leftIndex > rightIndex ? 1 : 0;
         });
       },
@@ -46,7 +51,7 @@ Copyright © 2019 Basecamp, LLC
       configurable: true
     });
     return EventListener;
-  }();
+  })();
   function extendEvent(event) {
     if ("immediatePropagationStopped" in event) {
       return event;
@@ -61,7 +66,7 @@ Copyright © 2019 Basecamp, LLC
       });
     }
   }
-  var Dispatcher = function() {
+  var Dispatcher = (function() {
     function Dispatcher(application) {
       this.application = application;
       this.eventListenerMaps = new Map();
@@ -85,9 +90,13 @@ Copyright © 2019 Basecamp, LLC
     };
     Object.defineProperty(Dispatcher.prototype, "eventListeners", {
       get: function() {
-        return Array.from(this.eventListenerMaps.values()).reduce(function(listeners, map) {
+        return Array.from(this.eventListenerMaps.values()).reduce(function(
+          listeners,
+          map
+        ) {
           return listeners.concat(Array.from(map.values()));
-        }, []);
+        },
+        []);
       },
       enumerable: true,
       configurable: true
@@ -105,11 +114,14 @@ Copyright © 2019 Basecamp, LLC
       this.application.handleError(error, "Error " + message, detail);
     };
     Dispatcher.prototype.fetchEventListenerForBinding = function(binding) {
-      var eventTarget = binding.eventTarget, eventName = binding.eventName;
+      var eventTarget = binding.eventTarget,
+        eventName = binding.eventName;
       return this.fetchEventListener(eventTarget, eventName);
     };
     Dispatcher.prototype.fetchEventListener = function(eventTarget, eventName) {
-      var eventListenerMap = this.fetchEventListenerMapForEventTarget(eventTarget);
+      var eventListenerMap = this.fetchEventListenerMapForEventTarget(
+        eventTarget
+      );
       var eventListener = eventListenerMap.get(eventName);
       if (!eventListener) {
         eventListener = this.createEventListener(eventTarget, eventName);
@@ -117,14 +129,19 @@ Copyright © 2019 Basecamp, LLC
       }
       return eventListener;
     };
-    Dispatcher.prototype.createEventListener = function(eventTarget, eventName) {
+    Dispatcher.prototype.createEventListener = function(
+      eventTarget,
+      eventName
+    ) {
       var eventListener = new EventListener(eventTarget, eventName);
       if (this.started) {
         eventListener.connect();
       }
       return eventListener;
     };
-    Dispatcher.prototype.fetchEventListenerMapForEventTarget = function(eventTarget) {
+    Dispatcher.prototype.fetchEventListenerMapForEventTarget = function(
+      eventTarget
+    ) {
       var eventListenerMap = this.eventListenerMaps.get(eventTarget);
       if (!eventListenerMap) {
         eventListenerMap = new Map();
@@ -133,7 +150,7 @@ Copyright © 2019 Basecamp, LLC
       return eventListenerMap;
     };
     return Dispatcher;
-  }();
+  })();
   var descriptorPattern = /^((.+?)(@(window|document))?->)?(.+?)(#(.+))?$/;
   function parseDescriptorString(descriptorString) {
     var source = descriptorString.trim();
@@ -159,21 +176,38 @@ Copyright © 2019 Basecamp, LLC
       return "document";
     }
   }
-  var Action = function() {
+  var Action = (function() {
     function Action(element, index, descriptor) {
       this.element = element;
       this.index = index;
       this.eventTarget = descriptor.eventTarget || element;
-      this.eventName = descriptor.eventName || getDefaultEventNameForElement(element) || error("missing event name");
+      this.eventName =
+        descriptor.eventName ||
+        getDefaultEventNameForElement(element) ||
+        error("missing event name");
       this.identifier = descriptor.identifier || error("missing identifier");
       this.methodName = descriptor.methodName || error("missing method name");
     }
     Action.forToken = function(token) {
-      return new this(token.element, token.index, parseDescriptorString(token.content));
+      return new this(
+        token.element,
+        token.index,
+        parseDescriptorString(token.content)
+      );
     };
     Action.prototype.toString = function() {
-      var eventNameSuffix = this.eventTargetName ? "@" + this.eventTargetName : "";
-      return "" + this.eventName + eventNameSuffix + "->" + this.identifier + "#" + this.methodName;
+      var eventNameSuffix = this.eventTargetName
+        ? "@" + this.eventTargetName
+        : "";
+      return (
+        "" +
+        this.eventName +
+        eventNameSuffix +
+        "->" +
+        this.identifier +
+        "#" +
+        this.methodName
+      );
     };
     Object.defineProperty(Action.prototype, "eventTargetName", {
       get: function() {
@@ -183,7 +217,7 @@ Copyright © 2019 Basecamp, LLC
       configurable: true
     });
     return Action;
-  }();
+  })();
   var defaultEventNames = {
     a: function(e) {
       return "click";
@@ -213,7 +247,7 @@ Copyright © 2019 Basecamp, LLC
   function error(message) {
     throw new Error(message);
   }
-  var Binding = function() {
+  var Binding = (function() {
     function Binding(context, action) {
       this.context = context;
       this.action = action;
@@ -257,7 +291,13 @@ Copyright © 2019 Basecamp, LLC
         if (typeof method == "function") {
           return method;
         }
-        throw new Error('Action "' + this.action + '" references undefined method "' + this.methodName + '"');
+        throw new Error(
+          'Action "' +
+            this.action +
+            '" references undefined method "' +
+            this.methodName +
+            '"'
+        );
       },
       enumerable: true,
       configurable: true
@@ -266,7 +306,11 @@ Copyright © 2019 Basecamp, LLC
       try {
         this.method.call(this.controller, event);
       } catch (error) {
-        var _a = this, identifier = _a.identifier, controller = _a.controller, element = _a.element, index = _a.index;
+        var _a = this,
+          identifier = _a.identifier,
+          controller = _a.controller,
+          element = _a.element,
+          index = _a.index;
         var detail = {
           identifier: identifier,
           controller: controller,
@@ -274,14 +318,21 @@ Copyright © 2019 Basecamp, LLC
           index: index,
           event: event
         };
-        this.context.handleError(error, 'invoking action "' + this.action + '"', detail);
+        this.context.handleError(
+          error,
+          'invoking action "' + this.action + '"',
+          detail
+        );
       }
     };
     Binding.prototype.willBeInvokedByEvent = function(event) {
       var eventTarget = event.target;
       if (this.element === eventTarget) {
         return true;
-      } else if (eventTarget instanceof Element && this.element.contains(eventTarget)) {
+      } else if (
+        eventTarget instanceof Element &&
+        this.element.contains(eventTarget)
+      ) {
         return this.scope.containsElement(eventTarget);
       } else {
         return true;
@@ -316,8 +367,8 @@ Copyright © 2019 Basecamp, LLC
       configurable: true
     });
     return Binding;
-  }();
-  var ElementObserver = function() {
+  })();
+  var ElementObserver = (function() {
     function ElementObserver(element, delegate) {
       var _this = this;
       this.element = element;
@@ -363,7 +414,11 @@ Copyright © 2019 Basecamp, LLC
     };
     ElementObserver.prototype.processMutations = function(mutations) {
       if (this.started) {
-        for (var _i = 0, mutations_1 = mutations; _i < mutations_1.length; _i++) {
+        for (
+          var _i = 0, mutations_1 = mutations;
+          _i < mutations_1.length;
+          _i++
+        ) {
           var mutation = mutations_1[_i];
           this.processMutation(mutation);
         }
@@ -377,10 +432,16 @@ Copyright © 2019 Basecamp, LLC
         this.processAddedNodes(mutation.addedNodes);
       }
     };
-    ElementObserver.prototype.processAttributeChange = function(node, attributeName) {
+    ElementObserver.prototype.processAttributeChange = function(
+      node,
+      attributeName
+    ) {
       var element = node;
       if (this.elements.has(element)) {
-        if (this.delegate.elementAttributeChanged && this.matchElement(element)) {
+        if (
+          this.delegate.elementAttributeChanged &&
+          this.matchElement(element)
+        ) {
           this.delegate.elementAttributeChanged(element, attributeName);
         } else {
           this.removeElement(element);
@@ -417,7 +478,11 @@ Copyright © 2019 Basecamp, LLC
       return this.delegate.matchElementsInTree(tree);
     };
     ElementObserver.prototype.processTree = function(tree, processor) {
-      for (var _i = 0, _a = this.matchElementsInTree(tree); _i < _a.length; _i++) {
+      for (
+        var _i = 0, _a = this.matchElementsInTree(tree);
+        _i < _a.length;
+        _i++
+      ) {
         var element = _a[_i];
         processor.call(this, element);
       }
@@ -453,8 +518,8 @@ Copyright © 2019 Basecamp, LLC
       }
     };
     return ElementObserver;
-  }();
-  var AttributeObserver = function() {
+  })();
+  var AttributeObserver = (function() {
     function AttributeObserver(element, attributeName, delegate) {
       this.attributeName = attributeName;
       this.delegate = delegate;
@@ -494,7 +559,7 @@ Copyright © 2019 Basecamp, LLC
       return element.hasAttribute(this.attributeName);
     };
     AttributeObserver.prototype.matchElementsInTree = function(tree) {
-      var match = this.matchElement(tree) ? [ tree ] : [];
+      var match = this.matchElement(tree) ? [tree] : [];
       var matches = Array.from(tree.querySelectorAll(this.selector));
       return match.concat(matches);
     };
@@ -508,13 +573,19 @@ Copyright © 2019 Basecamp, LLC
         this.delegate.elementUnmatchedAttribute(element, this.attributeName);
       }
     };
-    AttributeObserver.prototype.elementAttributeChanged = function(element, attributeName) {
-      if (this.delegate.elementAttributeValueChanged && this.attributeName == attributeName) {
+    AttributeObserver.prototype.elementAttributeChanged = function(
+      element,
+      attributeName
+    ) {
+      if (
+        this.delegate.elementAttributeValueChanged &&
+        this.attributeName == attributeName
+      ) {
         this.delegate.elementAttributeValueChanged(element, attributeName);
       }
     };
     return AttributeObserver;
-  }();
+  })();
   function add(map, key, value) {
     fetch(map, key).add(value);
   }
@@ -536,7 +607,7 @@ Copyright © 2019 Basecamp, LLC
       map.delete(key);
     }
   }
-  var Multimap = function() {
+  var Multimap = (function() {
     function Multimap() {
       this.valuesByKey = new Map();
     }
@@ -584,33 +655,46 @@ Copyright © 2019 Basecamp, LLC
       return values ? Array.from(values) : [];
     };
     Multimap.prototype.getKeysForValue = function(value) {
-      return Array.from(this.valuesByKey).filter(function(_a) {
-        var key = _a[0], values = _a[1];
-        return values.has(value);
-      }).map(function(_a) {
-        var key = _a[0], values = _a[1];
-        return key;
-      });
+      return Array.from(this.valuesByKey)
+        .filter(function(_a) {
+          var key = _a[0],
+            values = _a[1];
+          return values.has(value);
+        })
+        .map(function(_a) {
+          var key = _a[0],
+            values = _a[1];
+          return key;
+        });
     };
     return Multimap;
-  }();
-  var __extends = undefined && undefined.__extends || function() {
-    var extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function(d, b) {
-      d.__proto__ = b;
-    } || function(d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-    return function(d, b) {
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var IndexedMultimap = function(_super) {
+  })();
+  var __extends =
+    (undefined && undefined.__extends) ||
+    (function() {
+      var extendStatics =
+        Object.setPrototypeOf ||
+        ({
+          __proto__: []
+        } instanceof Array &&
+          function(d, b) {
+            d.__proto__ = b;
+          }) ||
+        function(d, b) {
+          for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        };
+      return function(d, b) {
+        extendStatics(d, b);
+        function __() {
+          this.constructor = d;
+        }
+        d.prototype =
+          b === null
+            ? Object.create(b)
+            : ((__.prototype = b.prototype), new __());
+      };
+    })();
+  var IndexedMultimap = (function(_super) {
     __extends(IndexedMultimap, _super);
     function IndexedMultimap() {
       var _this = _super.call(this) || this;
@@ -640,10 +724,14 @@ Copyright © 2019 Basecamp, LLC
       return set ? Array.from(set) : [];
     };
     return IndexedMultimap;
-  }(Multimap);
-  var TokenListObserver = function() {
+  })(Multimap);
+  var TokenListObserver = (function() {
     function TokenListObserver(element, attributeName, delegate) {
-      this.attributeObserver = new AttributeObserver(element, attributeName, this);
+      this.attributeObserver = new AttributeObserver(
+        element,
+        attributeName,
+        this
+      );
       this.delegate = delegate;
       this.tokensByElement = new Multimap();
     }
@@ -680,8 +768,12 @@ Copyright © 2019 Basecamp, LLC
     TokenListObserver.prototype.elementMatchedAttribute = function(element) {
       this.tokensMatched(this.readTokensForElement(element));
     };
-    TokenListObserver.prototype.elementAttributeValueChanged = function(element) {
-      var _a = this.refreshTokensForElement(element), unmatchedTokens = _a[0], matchedTokens = _a[1];
+    TokenListObserver.prototype.elementAttributeValueChanged = function(
+      element
+    ) {
+      var _a = this.refreshTokensForElement(element),
+        unmatchedTokens = _a[0],
+        matchedTokens = _a[1];
       this.tokensUnmatched(unmatchedTokens);
       this.tokensMatched(matchedTokens);
     };
@@ -711,14 +803,20 @@ Copyright © 2019 Basecamp, LLC
     TokenListObserver.prototype.refreshTokensForElement = function(element) {
       var previousTokens = this.tokensByElement.getValuesForKey(element);
       var currentTokens = this.readTokensForElement(element);
-      var firstDifferingIndex = zip(previousTokens, currentTokens).findIndex(function(_a) {
-        var previousToken = _a[0], currentToken = _a[1];
-        return !tokensAreEqual(previousToken, currentToken);
-      });
+      var firstDifferingIndex = zip(previousTokens, currentTokens).findIndex(
+        function(_a) {
+          var previousToken = _a[0],
+            currentToken = _a[1];
+          return !tokensAreEqual(previousToken, currentToken);
+        }
+      );
       if (firstDifferingIndex == -1) {
-        return [ [], [] ];
+        return [[], []];
       } else {
-        return [ previousTokens.slice(firstDifferingIndex), currentTokens.slice(firstDifferingIndex) ];
+        return [
+          previousTokens.slice(firstDifferingIndex),
+          currentTokens.slice(firstDifferingIndex)
+        ];
       }
     };
     TokenListObserver.prototype.readTokensForElement = function(element) {
@@ -727,33 +825,49 @@ Copyright © 2019 Basecamp, LLC
       return parseTokenString(tokenString, element, attributeName);
     };
     return TokenListObserver;
-  }();
+  })();
   function parseTokenString(tokenString, element, attributeName) {
-    return tokenString.trim().split(/\s+/).filter(function(content) {
-      return content.length;
-    }).map(function(content, index) {
-      return {
-        element: element,
-        attributeName: attributeName,
-        content: content,
-        index: index
-      };
-    });
+    return tokenString
+      .trim()
+      .split(/\s+/)
+      .filter(function(content) {
+        return content.length;
+      })
+      .map(function(content, index) {
+        return {
+          element: element,
+          attributeName: attributeName,
+          content: content,
+          index: index
+        };
+      });
   }
   function zip(left, right) {
     var length = Math.max(left.length, right.length);
-    return Array.from({
-      length: length
-    }, function(_, index) {
-      return [ left[index], right[index] ];
-    });
+    return Array.from(
+      {
+        length: length
+      },
+      function(_, index) {
+        return [left[index], right[index]];
+      }
+    );
   }
   function tokensAreEqual(left, right) {
-    return left && right && left.index == right.index && left.content == right.content;
+    return (
+      left &&
+      right &&
+      left.index == right.index &&
+      left.content == right.content
+    );
   }
-  var ValueListObserver = function() {
+  var ValueListObserver = (function() {
     function ValueListObserver(element, attributeName, delegate) {
-      this.tokenListObserver = new TokenListObserver(element, attributeName, this);
+      this.tokenListObserver = new TokenListObserver(
+        element,
+        attributeName,
+        this
+      );
       this.delegate = delegate;
       this.parseResultsByToken = new WeakMap();
       this.valuesByTokenByElement = new WeakMap();
@@ -812,7 +926,9 @@ Copyright © 2019 Basecamp, LLC
       }
       return parseResult;
     };
-    ValueListObserver.prototype.fetchValuesByTokenForElement = function(element) {
+    ValueListObserver.prototype.fetchValuesByTokenForElement = function(
+      element
+    ) {
       var valuesByToken = this.valuesByTokenByElement.get(element);
       if (!valuesByToken) {
         valuesByToken = new Map();
@@ -833,8 +949,8 @@ Copyright © 2019 Basecamp, LLC
       }
     };
     return ValueListObserver;
-  }();
-  var BindingObserver = function() {
+  })();
+  var BindingObserver = (function() {
     function BindingObserver(context, delegate) {
       this.context = context;
       this.delegate = delegate;
@@ -842,7 +958,11 @@ Copyright © 2019 Basecamp, LLC
     }
     BindingObserver.prototype.start = function() {
       if (!this.valueListObserver) {
-        this.valueListObserver = new ValueListObserver(this.element, this.actionAttribute, this);
+        this.valueListObserver = new ValueListObserver(
+          this.element,
+          this.actionAttribute,
+          this
+        );
         this.valueListObserver.start();
       }
     };
@@ -916,12 +1036,15 @@ Copyright © 2019 Basecamp, LLC
     BindingObserver.prototype.elementMatchedValue = function(element, action) {
       this.connectAction(action);
     };
-    BindingObserver.prototype.elementUnmatchedValue = function(element, action) {
+    BindingObserver.prototype.elementUnmatchedValue = function(
+      element,
+      action
+    ) {
       this.disconnectAction(action);
     };
     return BindingObserver;
-  }();
-  var Context = function() {
+  })();
+  var Context = (function() {
     function Context(module, scope) {
       this.module = module;
       this.scope = scope;
@@ -995,36 +1118,53 @@ Copyright © 2019 Basecamp, LLC
       if (detail === void 0) {
         detail = {};
       }
-      var _a = this, identifier = _a.identifier, controller = _a.controller, element = _a.element;
-      detail = Object.assign({
-        identifier: identifier,
-        controller: controller,
-        element: element
-      }, detail);
+      var _a = this,
+        identifier = _a.identifier,
+        controller = _a.controller,
+        element = _a.element;
+      detail = Object.assign(
+        {
+          identifier: identifier,
+          controller: controller,
+          element: element
+        },
+        detail
+      );
       this.application.handleError(error, "Error " + message, detail);
     };
     return Context;
-  }();
-  var __extends$1 = undefined && undefined.__extends || function() {
-    var extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function(d, b) {
-      d.__proto__ = b;
-    } || function(d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-    return function(d, b) {
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
+  })();
+  var __extends$1 =
+    (undefined && undefined.__extends) ||
+    (function() {
+      var extendStatics =
+        Object.setPrototypeOf ||
+        ({
+          __proto__: []
+        } instanceof Array &&
+          function(d, b) {
+            d.__proto__ = b;
+          }) ||
+        function(d, b) {
+          for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        };
+      return function(d, b) {
+        extendStatics(d, b);
+        function __() {
+          this.constructor = d;
+        }
+        d.prototype =
+          b === null
+            ? Object.create(b)
+            : ((__.prototype = b.prototype), new __());
+      };
+    })();
   function blessDefinition(definition) {
     return {
       identifier: definition.identifier,
-      controllerConstructor: blessControllerConstructor(definition.controllerConstructor)
+      controllerConstructor: blessControllerConstructor(
+        definition.controllerConstructor
+      )
     };
   }
   function blessControllerConstructor(controllerConstructor) {
@@ -1032,10 +1172,11 @@ Copyright © 2019 Basecamp, LLC
     constructor.bless();
     return constructor;
   }
-  var extend = function() {
+  var extend = (function() {
     function extendWithReflect(constructor) {
       function Controller() {
-        var _newTarget = this && this instanceof Controller ? this.constructor : void 0;
+        var _newTarget =
+          this && this instanceof Controller ? this.constructor : void 0;
         return Reflect.construct(constructor, arguments, _newTarget);
       }
       Controller.prototype = Object.create(constructor.prototype, {
@@ -1059,17 +1200,17 @@ Copyright © 2019 Basecamp, LLC
       return extendWithReflect;
     } catch (error) {
       return function(constructor) {
-        return function(_super) {
+        return (function(_super) {
           __extends$1(Controller, _super);
           function Controller() {
-            return _super !== null && _super.apply(this, arguments) || this;
+            return (_super !== null && _super.apply(this, arguments)) || this;
           }
           return Controller;
-        }(constructor);
+        })(constructor);
       };
     }
-  }();
-  var Module = function() {
+  })();
+  var Module = (function() {
     function Module(application, definition) {
       this.application = application;
       this.definition = blessDefinition(definition);
@@ -1118,8 +1259,8 @@ Copyright © 2019 Basecamp, LLC
       return context;
     };
     return Module;
-  }();
-  var DataMap = function() {
+  })();
+  var DataMap = (function() {
     function DataMap(scope) {
       this.scope = scope;
     }
@@ -1163,7 +1304,7 @@ Copyright © 2019 Basecamp, LLC
       return "data-" + this.identifier + "-" + dasherize(key);
     };
     return DataMap;
-  }();
+  })();
   function dasherize(value) {
     return value.replace(/([A-Z])/g, function(_, char) {
       return "-" + char.toLowerCase();
@@ -1172,7 +1313,7 @@ Copyright © 2019 Basecamp, LLC
   function attributeValueContainsToken(attributeName, token) {
     return "[" + attributeName + '~="' + token + '"]';
   }
-  var TargetSet = function() {
+  var TargetSet = (function() {
     function TargetSet(scope) {
       this.scope = scope;
     }
@@ -1218,17 +1359,22 @@ Copyright © 2019 Basecamp, LLC
     };
     TargetSet.prototype.getSelectorForTargetNames = function(targetNames) {
       var _this = this;
-      return targetNames.map(function(targetName) {
-        return _this.getSelectorForTargetName(targetName);
-      }).join(", ");
+      return targetNames
+        .map(function(targetName) {
+          return _this.getSelectorForTargetName(targetName);
+        })
+        .join(", ");
     };
     TargetSet.prototype.getSelectorForTargetName = function(targetName) {
       var targetDescriptor = this.identifier + "." + targetName;
-      return attributeValueContainsToken(this.schema.targetAttribute, targetDescriptor);
+      return attributeValueContainsToken(
+        this.schema.targetAttribute,
+        targetDescriptor
+      );
     };
     return TargetSet;
-  }();
-  var Scope = function() {
+  })();
+  var Scope = (function() {
     function Scope(schema, identifier, element) {
       this.schema = schema;
       this.identifier = identifier;
@@ -1240,8 +1386,10 @@ Copyright © 2019 Basecamp, LLC
       return this.findAllElements(selector)[0];
     };
     Scope.prototype.findAllElements = function(selector) {
-      var head = this.element.matches(selector) ? [ this.element ] : [];
-      var tail = this.filterElements(Array.from(this.element.querySelectorAll(selector)));
+      var head = this.element.matches(selector) ? [this.element] : [];
+      var tail = this.filterElements(
+        Array.from(this.element.querySelectorAll(selector))
+      );
       return head.concat(tail);
     };
     Scope.prototype.filterElements = function(elements) {
@@ -1255,19 +1403,26 @@ Copyright © 2019 Basecamp, LLC
     };
     Object.defineProperty(Scope.prototype, "controllerSelector", {
       get: function() {
-        return attributeValueContainsToken(this.schema.controllerAttribute, this.identifier);
+        return attributeValueContainsToken(
+          this.schema.controllerAttribute,
+          this.identifier
+        );
       },
       enumerable: true,
       configurable: true
     });
     return Scope;
-  }();
-  var ScopeObserver = function() {
+  })();
+  var ScopeObserver = (function() {
     function ScopeObserver(element, schema, delegate) {
       this.element = element;
       this.schema = schema;
       this.delegate = delegate;
-      this.valueListObserver = new ValueListObserver(this.element, this.controllerAttribute, this);
+      this.valueListObserver = new ValueListObserver(
+        this.element,
+        this.controllerAttribute,
+        this
+      );
       this.scopesByIdentifierByElement = new WeakMap();
       this.scopeReferenceCounts = new WeakMap();
     }
@@ -1285,7 +1440,8 @@ Copyright © 2019 Basecamp, LLC
       configurable: true
     });
     ScopeObserver.prototype.parseValueForToken = function(token) {
-      var element = token.element, identifier = token.content;
+      var element = token.element,
+        identifier = token.content;
       var scopesByIdentifier = this.fetchScopesByIdentifierForElement(element);
       var scope = scopesByIdentifier.get(identifier);
       if (!scope) {
@@ -1310,7 +1466,9 @@ Copyright © 2019 Basecamp, LLC
         }
       }
     };
-    ScopeObserver.prototype.fetchScopesByIdentifierForElement = function(element) {
+    ScopeObserver.prototype.fetchScopesByIdentifierForElement = function(
+      element
+    ) {
       var scopesByIdentifier = this.scopesByIdentifierByElement.get(element);
       if (!scopesByIdentifier) {
         scopesByIdentifier = new Map();
@@ -1319,8 +1477,8 @@ Copyright © 2019 Basecamp, LLC
       return scopesByIdentifier;
     };
     return ScopeObserver;
-  }();
-  var Router = function() {
+  })();
+  var Router = (function() {
     function Router(application) {
       this.application = application;
       this.scopeObserver = new ScopeObserver(this.element, this.schema, this);
@@ -1381,7 +1539,10 @@ Copyright © 2019 Basecamp, LLC
         this.disconnectModule(module);
       }
     };
-    Router.prototype.getContextForElementAndIdentifier = function(element, identifier) {
+    Router.prototype.getContextForElementAndIdentifier = function(
+      element,
+      identifier
+    ) {
       var module = this.modulesByIdentifier.get(identifier);
       if (module) {
         return module.contexts.find(function(context) {
@@ -1421,125 +1582,150 @@ Copyright © 2019 Basecamp, LLC
       });
     };
     return Router;
-  }();
+  })();
   var defaultSchema = {
     controllerAttribute: "data-controller",
     actionAttribute: "data-action",
     targetAttribute: "data-target"
   };
-  var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
+  var __awaiter =
+    (undefined && undefined.__awaiter) ||
+    function(thisArg, _arguments, P, generator) {
+      return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+          try {
+            step(generator.next(value));
+          } catch (e) {
+            reject(e);
+          }
         }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
+        function rejected(value) {
+          try {
+            step(generator["throw"](value));
+          } catch (e) {
+            reject(e);
+          }
         }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : new P(function(resolve) {
-          resolve(result.value);
-        }).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
-  var __generator = undefined && undefined.__generator || function(thisArg, body) {
-    var _ = {
-      label: 0,
-      sent: function() {
-        if (t[0] & 1) throw t[1];
-        return t[1];
-      },
-      trys: [],
-      ops: []
-    }, f, y, t, g;
-    return g = {
-      next: verb(0),
-      throw: verb(1),
-      return: verb(2)
-    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-      return this;
-    }), g;
-    function verb(n) {
-      return function(v) {
-        return step([ n, v ]);
-      };
-    }
-    function step(op) {
-      if (f) throw new TypeError("Generator is already executing.");
-      while (_) try {
-        if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-        if (y = 0, t) op = [ 0, t.value ];
-        switch (op[0]) {
-         case 0:
-         case 1:
-          t = op;
-          break;
-
-         case 4:
-          _.label++;
-          return {
-            value: op[1],
-            done: false
-          };
-
-         case 5:
-          _.label++;
-          y = op[1];
-          op = [ 0 ];
-          continue;
-
-         case 7:
-          op = _.ops.pop();
-          _.trys.pop();
-          continue;
-
-         default:
-          if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-            _ = 0;
-            continue;
-          }
-          if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-            _.label = op[1];
-            break;
-          }
-          if (op[0] === 6 && _.label < t[1]) {
-            _.label = t[1];
-            t = op;
-            break;
-          }
-          if (t && _.label < t[2]) {
-            _.label = t[2];
-            _.ops.push(op);
-            break;
-          }
-          if (t[2]) _.ops.pop();
-          _.trys.pop();
-          continue;
+        function step(result) {
+          result.done
+            ? resolve(result.value)
+            : new P(function(resolve) {
+                resolve(result.value);
+              }).then(fulfilled, rejected);
         }
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [ 6, e ];
-        y = 0;
-      } finally {
-        f = t = 0;
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+      });
+    };
+  var __generator =
+    (undefined && undefined.__generator) ||
+    function(thisArg, body) {
+      var _ = {
+          label: 0,
+          sent: function() {
+            if (t[0] & 1) throw t[1];
+            return t[1];
+          },
+          trys: [],
+          ops: []
+        },
+        f,
+        y,
+        t,
+        g;
+      return (
+        (g = {
+          next: verb(0),
+          throw: verb(1),
+          return: verb(2)
+        }),
+        typeof Symbol === "function" &&
+          (g[Symbol.iterator] = function() {
+            return this;
+          }),
+        g
+      );
+      function verb(n) {
+        return function(v) {
+          return step([n, v]);
+        };
       }
-      if (op[0] & 5) throw op[1];
-      return {
-        value: op[0] ? op[1] : void 0,
-        done: true
-      };
-    }
-  };
-  var Application = function() {
+      function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_)
+          try {
+            if (
+              ((f = 1),
+              y &&
+                (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) &&
+                !(t = t.call(y, op[1])).done)
+            )
+              return t;
+            if (((y = 0), t)) op = [0, t.value];
+            switch (op[0]) {
+              case 0:
+              case 1:
+                t = op;
+                break;
+
+              case 4:
+                _.label++;
+                return {
+                  value: op[1],
+                  done: false
+                };
+
+              case 5:
+                _.label++;
+                y = op[1];
+                op = [0];
+                continue;
+
+              case 7:
+                op = _.ops.pop();
+                _.trys.pop();
+                continue;
+
+              default:
+                if (
+                  !((t = _.trys), (t = t.length > 0 && t[t.length - 1])) &&
+                  (op[0] === 6 || op[0] === 2)
+                ) {
+                  _ = 0;
+                  continue;
+                }
+                if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
+                  _.label = op[1];
+                  break;
+                }
+                if (op[0] === 6 && _.label < t[1]) {
+                  _.label = t[1];
+                  t = op;
+                  break;
+                }
+                if (t && _.label < t[2]) {
+                  _.label = t[2];
+                  _.ops.push(op);
+                  break;
+                }
+                if (t[2]) _.ops.pop();
+                _.trys.pop();
+                continue;
+            }
+            op = body.call(thisArg, _);
+          } catch (e) {
+            op = [6, e];
+            y = 0;
+          } finally {
+            f = t = 0;
+          }
+        if (op[0] & 5) throw op[1];
+        return {
+          value: op[0] ? op[1] : void 0,
+          done: true
+        };
+      }
+    };
+  var Application = (function() {
     function Application(element, schema) {
       if (element === void 0) {
         element = document.documentElement;
@@ -1561,14 +1747,14 @@ Copyright © 2019 Basecamp, LLC
       return __awaiter(this, void 0, void 0, function() {
         return __generator(this, function(_a) {
           switch (_a.label) {
-           case 0:
-            return [ 4, domReady() ];
+            case 0:
+              return [4, domReady()];
 
-           case 1:
-            _a.sent();
-            this.router.start();
-            this.dispatcher.start();
-            return [ 2 ];
+            case 1:
+              _a.sent();
+              this.router.start();
+              this.dispatcher.start();
+              return [2];
           }
         });
       });
@@ -1577,7 +1763,10 @@ Copyright © 2019 Basecamp, LLC
       this.router.stop();
       this.dispatcher.stop();
     };
-    Application.prototype.register = function(identifier, controllerConstructor) {
+    Application.prototype.register = function(
+      identifier,
+      controllerConstructor
+    ) {
       this.load({
         identifier: identifier,
         controllerConstructor: controllerConstructor
@@ -1589,7 +1778,7 @@ Copyright © 2019 Basecamp, LLC
       for (var _i = 1; _i < arguments.length; _i++) {
         rest[_i - 1] = arguments[_i];
       }
-      var definitions = Array.isArray(head) ? head : [ head ].concat(rest);
+      var definitions = Array.isArray(head) ? head : [head].concat(rest);
       definitions.forEach(function(definition) {
         return _this.router.loadDefinition(definition);
       });
@@ -1600,7 +1789,7 @@ Copyright © 2019 Basecamp, LLC
       for (var _i = 1; _i < arguments.length; _i++) {
         rest[_i - 1] = arguments[_i];
       }
-      var identifiers = Array.isArray(head) ? head : [ head ].concat(rest);
+      var identifiers = Array.isArray(head) ? head : [head].concat(rest);
       identifiers.forEach(function(identifier) {
         return _this.router.unloadIdentifier(identifier);
       });
@@ -1614,15 +1803,21 @@ Copyright © 2019 Basecamp, LLC
       enumerable: true,
       configurable: true
     });
-    Application.prototype.getControllerForElementAndIdentifier = function(element, identifier) {
-      var context = this.router.getContextForElementAndIdentifier(element, identifier);
+    Application.prototype.getControllerForElementAndIdentifier = function(
+      element,
+      identifier
+    ) {
+      var context = this.router.getContextForElementAndIdentifier(
+        element,
+        identifier
+      );
       return context ? context.controller : null;
     };
     Application.prototype.handleError = function(error, message, detail) {
       console.error("%s\n\n%o\n\n%o", message, error, detail);
     };
     return Application;
-  }();
+  })();
   function domReady() {
     return new Promise(function(resolve) {
       if (document.readyState == "loading") {
@@ -1637,34 +1832,45 @@ Copyright © 2019 Basecamp, LLC
     var targetNames = getTargetNamesForConstructor(constructor);
     targetNames.forEach(function(name) {
       var _a;
-      return defineLinkedProperties(prototype, (_a = {}, _a[name + "Target"] = {
-        get: function() {
-          var target = this.targets.find(name);
-          if (target) {
-            return target;
-          } else {
-            throw new Error('Missing target element "' + this.identifier + "." + name + '"');
+      return defineLinkedProperties(
+        prototype,
+        ((_a = {}),
+        (_a[name + "Target"] = {
+          get: function() {
+            var target = this.targets.find(name);
+            if (target) {
+              return target;
+            } else {
+              throw new Error(
+                'Missing target element "' + this.identifier + "." + name + '"'
+              );
+            }
           }
-        }
-      }, _a[name + "Targets"] = {
-        get: function() {
-          return this.targets.findAll(name);
-        }
-      }, _a["has" + capitalize(name) + "Target"] = {
-        get: function() {
-          return this.targets.has(name);
-        }
-      }, _a));
+        }),
+        (_a[name + "Targets"] = {
+          get: function() {
+            return this.targets.findAll(name);
+          }
+        }),
+        (_a["has" + capitalize(name) + "Target"] = {
+          get: function() {
+            return this.targets.has(name);
+          }
+        }),
+        _a)
+      );
     });
   }
   function getTargetNamesForConstructor(constructor) {
     var ancestors = getAncestorsForConstructor(constructor);
-    return Array.from(ancestors.reduce(function(targetNames, constructor) {
-      getOwnTargetNamesForConstructor(constructor).forEach(function(name) {
-        return targetNames.add(name);
-      });
-      return targetNames;
-    }, new Set()));
+    return Array.from(
+      ancestors.reduce(function(targetNames, constructor) {
+        getOwnTargetNamesForConstructor(constructor).forEach(function(name) {
+          return targetNames.add(name);
+        });
+        return targetNames;
+      }, new Set())
+    );
   }
   function getAncestorsForConstructor(constructor) {
     var ancestors = [];
@@ -1689,7 +1895,7 @@ Copyright © 2019 Basecamp, LLC
   function capitalize(name) {
     return name.charAt(0).toUpperCase() + name.slice(1);
   }
-  var Controller = function() {
+  var Controller = (function() {
     function Controller(context) {
       this.context = context;
     }
@@ -1743,7 +1949,7 @@ Copyright © 2019 Basecamp, LLC
     Controller.prototype.disconnect = function() {};
     Controller.targets = [];
     return Controller;
-  }();
+  })();
   exports.Application = Application;
   exports.Context = Context;
   exports.Controller = Controller;

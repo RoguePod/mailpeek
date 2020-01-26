@@ -8,30 +8,17 @@ require 'cgi'
 module Mailpeek
   # Private: WebHelpers
   module WebHelpers
-    def poll_path
-      if current_path != '' && params['poll']
-        root_path + current_path
-      else
-        ''
-      end
-    end
-
-    # mperham/sidekiq#3243
-    def unfiltered?
-      yield unless env['PATH_INFO'].start_with?('/filter/')
-    end
-
     def emails
       return @emails if @emails
 
       @emails = Mailpeek.emails
 
-      if params['q'].present?
-        @emails = @emails.select { |x| x.match?(params['q']) }
+      if params[:q].present?
+        @emails = @emails.select { |x| x.match?(params[:q]) }
       end
 
-      @total_count = @emails.size
-      @emails = @emails.first(params['q'] || 10)
+      @total_count = emails.size
+      @emails = @emails.first((params[:per] || 20).to_i)
     end
 
     def unread
@@ -42,27 +29,16 @@ module Mailpeek
       "#{env['SCRIPT_NAME']}/"
     end
 
+    def product_version
+      "v#{Mailpeek::VERSION}"
+    end
+
+    def query_string
+      @query_string ||= request.query_string
+    end
+
     def current_path
       @current_path ||= request.path_info.gsub(%r{^\/}, '')
-    end
-
-    def relative_time(time)
-      stamp = time.getutc.iso8601
-      %(<time class="ltr" dir="ltr" title="#{stamp}" datetime="#{stamp}">
-        #{time}</time>)
-    end
-
-    def parse_params(params)
-      score, jid = params.split('-', 2)
-      [score.to_f, jid]
-    end
-
-    def truncate(text, truncate_after_chars = 2000)
-      if truncate_after_chars && text.size > truncate_after_chars
-        return "#{text[0..truncate_after_chars]}..."
-      end
-
-      text
     end
 
     def h(text)
@@ -93,16 +69,8 @@ module Mailpeek
       end
     end
 
-    # Any paginated list that performs an action needs to redirect
-    # back to the proper page after performing that action.
     def redirect_with_query(url)
-      r = request.referer
-      if r && r =~ /\?/
-        ref = URI(r)
-        redirect("#{url}?#{ref.query}")
-      else
-        redirect url
-      end
+      redirect("#{url}?#{query_string}")
     end
   end
 end

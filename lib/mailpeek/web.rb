@@ -46,8 +46,6 @@ module Mailpeek
         opts.each { |key| set(key, false) }
       end
 
-      # Helper for the Sinatra syntax:
-      # Mailpeek::Web.set(:session_secret, Rails.application.secrets...)
       def set(attribute, value)
         send(:"#{attribute}=", value)
       end
