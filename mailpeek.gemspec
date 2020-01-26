@@ -12,8 +12,8 @@ Gem::Specification.new do |s|
   s.authors     = ['Rogue Pod, LLC.']
   s.email       = ['support@roguepod.com']
   s.homepage    = 'https://github.com/RoguePod/mailpeek'
-  s.summary     = 'Preview Rails Emails'
-  s.description = 'Provides a web interface to view emails sent out when ' \
+  s.summary     = 'View Emails in Rails'
+  s.description = 'A web interface to view emails sent out when ' \
     'developing in Rails'
   s.license     = 'MIT'
 
