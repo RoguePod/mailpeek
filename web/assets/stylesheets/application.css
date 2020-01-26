@@ -16,6 +16,10 @@ main {
   margin-left: 20rem;
 }
 
+p {
+  margin-bottom: 1rem;
+}
+
 .sidebar {
   transition: transform .25s ease;
   top: 3rem;

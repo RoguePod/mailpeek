@@ -52,21 +52,7 @@ module Mailpeek
     end
 
     def simple_format(text)
-      paragraphs = split_paragraphs(text)
-
-      return text if paragraphs.empty?
-
-      paragraphs.map! do |paragraph|
-        "<p>#{paragraph}</p>"
-      end.join("\n\n")
-    end
-
-    def split_paragraphs(text)
-      return [] if text.blank?
-
-      text.to_str.gsub(/\r\n?/, "\n").split(/\n\n+/).map! do |t|
-        t.gsub!(/([^\n]\n)(?=[^\n])/, '\1<br />') || t
-      end
+      text.split("\n").join('<br />')
     end
 
     def redirect_with_query(url)
