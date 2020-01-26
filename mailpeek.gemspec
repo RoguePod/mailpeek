@@ -7,7 +7,7 @@ require 'mailpeek/version'
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = 'Mailpeek'
+  s.name        = 'mailpeek'
   s.version     = Mailpeek::VERSION
   s.authors     = ['Rogue Pod, LLC.']
   s.email       = ['support@roguepod.com']
