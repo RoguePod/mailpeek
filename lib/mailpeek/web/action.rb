@@ -25,7 +25,9 @@ module Mailpeek
       return @params if @params
 
       @params =
-        route_params.merge(request.params).inject({}) do |results, (key, value)|
+        route_params
+        .merge(request.params)
+        .each_with_object({}) do |(key, value), results|
           results[key.to_s] = value
           results[key.to_sym] = value
           results
@@ -71,7 +73,7 @@ module Mailpeek
     end
 
     def send_file(path, filename)
-      response = [
+      [
         200,
         {
           'Cache-Control' => 'no-cache',

@@ -4,30 +4,26 @@ require:
 AllCops:
   Exclude:
     - '**/bin/**/*'
-AbcSize:
+Metrics/AbcSize:
   Max: 30
-BlockDelimiters:
+Style/BlockDelimiters:
   Enabled: false
-BlockLength:
+Metrics/BlockLength:
   Exclude:
     - '**/spec/**/*'
     - '**/lib/**/*.rake'
-ClassLength:
+Metrics/ClassLength:
   Max: 150
-Lambda:
+Style/Lambda:
   Exclude:
     - 'app/models/**/*'
-LineLength:
+Layout/LineLength:
   Max: 80
-Output:
-  Exclude:
-    - '**/*.rake'
-    - '**/rake_support.rb'
-MethodLength:
+Metrics/MethodLength:
   Max: 15
-ModuleLength:
+Metrics/ModuleLength:
   Max: 150
-FileName:
+Naming/FileName:
   Exclude:
     - '**/Guardfile'
     - '**/Capfile'

@@ -75,7 +75,7 @@ module Mailpeek
     def parse_body
       body = mail.body.decoded.force_encoding('utf-8')
 
-      if mail.content_type.match(/html/)
+      if mail.content_type =~ /html/
         @html = body
       else
         @text = body

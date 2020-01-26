@@ -20,11 +20,14 @@ module Mailpeek
         raise InvalidOption, 'A location option is required when using Mailpeek'
       end
 
+      # rubocop:disable Style/GuardClause
       if options[:limit].nil?
         raise InvalidOption, 'A limit option is required when using Mailpeek'
       elsif options[:limit] <= 0
         raise InvalidOption, 'A limit option is an invalid number'
       end
+
+      # rubocop:enable Style/GuardClause
 
       self.settings = options
     end

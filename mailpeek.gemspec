@@ -7,7 +7,7 @@ require 'mailpeek/version'
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = 'mailpeek'
+  s.name        = 'Mailpeek'
   s.version     = Mailpeek::VERSION
   s.authors     = ['Rogue Pod, LLC.']
   s.email       = ['support@roguepod.com']
@@ -27,6 +27,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'rack', '~> 2.0'
   s.add_dependency 'rack-protection', '~> 2.0'
 
-  s.add_development_dependency 'rubocop', '~> 0.69'
-  s.add_development_dependency 'rubocop-performance', '~> 1.3'
+  s.add_development_dependency 'rubocop', '~> 0.79'
+  s.add_development_dependency 'rubocop-performance', '~> 1.5'
 end
