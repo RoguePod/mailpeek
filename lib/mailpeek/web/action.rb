@@ -18,7 +18,7 @@ module Mailpeek
     end
 
     def redirect(location)
-      throw :halt, [302, { 'Location' => "#{request.base_url}#{location}" }, []]
+      halt([302, { 'Location' => "#{request.base_url}#{location}" }, []])
     end
 
     def params
@@ -89,9 +89,7 @@ module Mailpeek
       @env = env
       @block = block
 
-      # rubocop:disable Style/ClassVars
-      @@files ||= {}
-      # rubocop:enable Style/ClassVars
+      # @@files ||= {}
     end
 
     private

@@ -8,8 +8,9 @@ require 'mailpeek/web'
 require 'mailpeek/version'
 
 require 'json'
+require 'tmpdir'
 
-# Public: Mailpeek
+# Public: Mailpeek Base Class
 module Mailpeek
   def self.configuration
     @configuration ||= Configuration.new

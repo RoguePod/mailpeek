@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.files = `git ls-files`.split("\n")
 
-  # s.test_files = Dir['spec/**/*']
+  s.test_files = Dir['spec/**/*']
 
   s.required_ruby_version = '>= 2.3.0'
 
@@ -27,6 +27,11 @@ Gem::Specification.new do |s|
   s.add_dependency 'rack', '~> 2.0'
   s.add_dependency 'rack-protection', '~> 2.0'
 
+  s.add_development_dependency 'faker', '~> 2'
+  s.add_development_dependency 'guard-rubocop', '~> 1.3'
+  s.add_development_dependency 'rspec', '~> 3'
   s.add_development_dependency 'rubocop', '~> 0.79'
   s.add_development_dependency 'rubocop-performance', '~> 1.5'
+  s.add_development_dependency 'rubocop-rspec', '~> 1.37'
+  s.add_development_dependency 'simplecov', '~> 0.17'
 end

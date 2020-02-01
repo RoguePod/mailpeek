@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-require 'mail/check_delivery_params'
-
 module Mailpeek
-  # Public: Delivery
+  # Public: Handles consuming emails, checking configuration, creating
+  # directories, cleaning up emails and saving attachments
   class Delivery
-    include Mail::CheckDeliveryParams if defined?(Mail::CheckDeliveryParams)
-
     class InvalidOption < StandardError; end
 
     attr_accessor :settings
@@ -23,7 +20,7 @@ module Mailpeek
       # rubocop:disable Style/GuardClause
       if options[:limit].nil?
         raise InvalidOption, 'A limit option is required when using Mailpeek'
-      elsif options[:limit] <= 0
+      elsif options[:limit].to_i <= 0
         raise InvalidOption, 'A limit option is an invalid number'
       end
 
@@ -33,8 +30,6 @@ module Mailpeek
     end
 
     def deliver!(mail)
-      check_delivery_params(mail) if respond_to?(:check_delivery_params)
-
       clean_up
 
       basepath = File.join(settings[:location], Time.now.to_i.to_s)

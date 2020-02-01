@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'mail/check_delivery_params'
-
 module Mailpeek
   # Public: Wrapper class for mail object
   class Email
@@ -21,11 +19,7 @@ module Mailpeek
       @date        = mail.date
       @attachments = []
 
-      if mail.multipart?
-        parse_parts
-      else
-        parse_body
-      end
+      mail.multipart? ? parse_parts : parse_body
     end
 
     def match?(query)
@@ -33,9 +27,7 @@ module Mailpeek
     end
 
     def destroy
-      location = Mailpeek.configuration.location
-
-      FileUtils.rm_rf("#{location}/#{id}")
+      FileUtils.rm_rf("#{Mailpeek.configuration.location}/#{id}")
     end
 
     def read
