@@ -104,7 +104,7 @@ describe Mailpeek::Email do
 
       with = "#{Mailpeek.configuration.location}/#{id}"
 
-      expect(FileUtils).to have_received(:rm_rf).once.with(with)
+      expect(FileUtils).to have_received(:rm_rf).with(with).once
     end
   end
 

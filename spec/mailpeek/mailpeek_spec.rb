@@ -30,7 +30,7 @@ describe Mailpeek do
 
       location = described_class.configuration.location
 
-      expect(FileUtils).to have_received(:mkdir_p).once.with(location)
+      expect(FileUtils).to have_received(:mkdir_p).with(location).once
     end
   end
 end

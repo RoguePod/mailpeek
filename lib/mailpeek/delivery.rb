@@ -14,17 +14,12 @@ module Mailpeek
       options[:limit] = options[:limit].to_i
 
       if options[:location].nil?
-        raise InvalidOption, 'A location option is required when using Mailpeek'
+        raise InvalidOption, 'The Mailpeek location option is required'
       end
 
-      # rubocop:disable Style/GuardClause
-      if options[:limit].nil?
-        raise InvalidOption, 'A limit option is required when using Mailpeek'
-      elsif options[:limit].to_i <= 0
-        raise InvalidOption, 'A limit option is an invalid number'
+      if options[:limit] <= 0
+        raise InvalidOption, 'The Mailpeek limit option is an invalid number'
       end
-
-      # rubocop:enable Style/GuardClause
 
       self.settings = options
     end
@@ -32,20 +27,21 @@ module Mailpeek
     def deliver!(mail)
       clean_up
 
-      basepath = File.join(settings[:location], Time.now.to_i.to_s)
+      timestamp = Time.now.to_i.to_s
+
+      basepath = File.join(settings[:location], timestamp)
 
       save_email(mail, basepath)
 
-      return true unless mail.attachments.any?
+      add_attachments(mail, basepath) if mail.attachments.any?
 
-      add_attachments(mail, basepath)
+      timestamp
     end
 
     private
 
+    # remove oldest email if over `limit` settings
     def clean_up
-      # remove oldest email if over `limit` settings
-
       directory = File.join(settings[:location], '*')
       return if Dir[directory].length < settings[:limit]
 
@@ -55,8 +51,8 @@ module Mailpeek
     def save_email(mail, basepath)
       FileUtils.mkdir_p(basepath)
 
-      File.open(File.join(basepath, 'mail'), 'w') do |f|
-        f.write mail.to_s
+      File.open(File.join(basepath, 'mail'), 'w') do |file|
+        file.write(mail.to_s)
       end
     end
 
