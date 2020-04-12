@@ -37,10 +37,6 @@ module Mailpeek
       @query_string ||= request.query_string
     end
 
-    def current_path
-      @current_path ||= request.path_info.gsub(%r{^\/}, '')
-    end
-
     def h(text)
       ::Rack::Utils.escape_html(text)
     rescue ArgumentError => e

@@ -7,7 +7,7 @@ Mailpeek provides a web interface to view emails sent out when developing in Rai
 Add to your Gemfile:
 
 ```
-gem 'mailpeek', group: :development
+gem 'mailpeek', group: %i[development test]
 ```
 
 ## Setup
