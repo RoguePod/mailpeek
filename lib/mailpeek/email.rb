@@ -4,8 +4,17 @@ module Mailpeek
   # Public: Wrapper class for mail object
   class Email
     attr_reader(
-      :id, :position, :mail, :html, :text, :attachments, :to, :from, :subject,
-      :message_id, :date
+      :attachments,
+      :date,
+      :from,
+      :html,
+      :id,
+      :mail,
+      :message_id,
+      :position,
+      :subject,
+      :text,
+      :to,
     )
 
     def initialize(timestamp, mail)

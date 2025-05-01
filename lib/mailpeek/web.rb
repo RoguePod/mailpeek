@@ -10,7 +10,7 @@ require 'mailpeek/web/application'
 require 'rack/protection'
 
 require 'rack/builder'
-require 'rack/file'
+require 'rack/files'
 
 # Public: Mailpeek
 module Mailpeek
@@ -114,7 +114,7 @@ module Mailpeek
       ::Rack::Builder.new do
         %w[stylesheets javascripts images].each do |asset_dir|
           map "/#{asset_dir}" do
-            run ::Rack::File.new(
+            run ::Rack::Files.new(
               "#{ASSETS}/#{asset_dir}",
               'Cache-Control' => 'public, max-age=86400'
             )
